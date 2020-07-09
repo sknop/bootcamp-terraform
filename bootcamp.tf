@@ -1,26 +1,30 @@
-// Copyright 2019 Sven Erik Knop sven@confluent.io
+// Copyright 2020 Sven Erik Knop sven@confluent.io
 // All rights reserved
 
 // Variables
 
 variable "region" {
-  default = "us-west-2"
+  default = "eu-west-2"
+}
+
+variable "availability-zone" {
+  default = "eu-west-2c"
 }
 
 variable "owner" {
-  default = "sek"
+  default = "sven"
 }
 
-variable "key_name" {
-  default = "bootcamp"
+variable "key-name" {
+  default = "sven-bootcamp"
 }
 
 variable "zk-count" {
-  default = 1
+  default = 3
 }
 
 variable "broker-count" {
-  default = 1
+  default = 3
 }
 
 variable "connect-count" {
@@ -60,220 +64,225 @@ locals {
 
 provider "aws" {
   profile    = "default"
-  region     = "${var.region}"
+  region     = var.region
 }
 
-// Search for AMI rather than hard coding its ID
+variable "aws-ami-id"  {
+  default = "ami-00f6a0c18edb19300"
+}
 
-data "aws_ami" "centos" {
-  owners      = ["679593333241"]
-  most_recent = true
+variable "linux-user" {
+  default = "ubuntu"
+}
 
-  filter {
-    name   = "name"
-    values = ["CentOS Linux 7 x86_64 HVM EBS *"]
-  }
+variable "vpc-id" {
+  default = "vpc-0d491fae1728c8ab4"
+}
 
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
+variable "subnet-id" {
+  default = "subnet-088cf9bdf1ab0bef9"
+}
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+variable "vpc-security-group-ids" {
+  default = ["sg-0b5a6349d3f67a7cc", "sg-05cc09eb65e82b193"]
 }
 
 // Search for available availibility zones (say it quickly three times)
 
-data "aws_availability_zones" "available" {
-  state = "available"
-}
+//data "aws_availability_zones" "available" {
+//  state = "available"
+//}
 
 // vpc_id vpc-047944e470c1d51db
 
 // Resources
 
 resource "aws_instance" "zookeepers" {
-  count         = "${var.zk-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.zk-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.zk-count
+  ami           = var.aws-ami-id
+  instance_type = local.zk-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
 
   tags = {
-    Name = "${var.owner}-zookeeper-${count.index}-us-west-2a"
+    Name = "${var.owner}-zookeeper-${count.index}-${var.availability-zone}"
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
-    zookeeperid = "${count.index}"
-    Owner = "${var.owner}"
-    sshUser = "centos"
-    region = "${var.region}"
+    zookeeperid = count.index
+    owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "zookeepers-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "brokers" {
-  count         = "${var.broker-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.broker-instance-type}"
-  availability_zone = "us-west-2a"
+  count         = var.broker-count
+  ami           = var.aws-ami-id
+  instance_type = local.broker-instance-type
+  availability_zone = var.availability-zone
   # security_groups = ["${var.security_group}"]
-  key_name = "${var.key_name}"
+  key_name = var.key-name
   root_block_device {
     volume_size = 1000 # 1TB
   }
   tags = {
-    Name = "${var.owner}-broker-${count.index}-us-west-2a"
+    Name = "${var.owner}-broker-${count.index}-${var.availability-zone}"
     description = "broker nodes - Managed by Terraform"
     nice-name = "kafka-${count.index}"
     big-nice-name = "follower-kafka-${count.index}"
-    brokerid = "${count.index}"
+    brokerid = count.index
     role = "broker"
-    owner = "${var.owner}"
-    sshUser = "ubuntu"
+    owner = var.owner
+    sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
     # ansible_python_interpreter = "/usr/bin/python3"
     #EntScheduler = "mon,tue,wed,thu,fri;1600;mon,tue,wed,thu;fri;sat;0400;"
-    region = "${var.region}"
+    region = var.region
     role_region = "brokers-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "connect-cluster" {
-  count         = "${var.connect-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.connect-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.connect-count
+  ami           = var.aws-ami-id
+  instance_type = local.connect-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
   tags = {
-    Name = "${var.owner}-connect-${count.index}-us-west-2a"
+    Name = "${var.owner}-connect-${count.index}-${var.availability-zone}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
-    Owner = "${var.owner}"
-    sshUser = "ubuntu"
-    region = "${var.region}"
+    Owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "connect-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "schema" {
-  count         = "${var.schema-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.schema-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.schema-count
+  ami           = var.aws-ami-id
+  instance_type = local.schema-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
   tags = {
-    Name = "${var.owner}-schema-${count.index}-us-west-2a"
+    Name = "${var.owner}-schema-${count.index}-${var.availability-zone}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
-    Owner = "${var.owner}"
-    sshUser = "ubuntu"
-    region = "${var.region}"
+    Owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "control-center" {
-  count         = "${var.c3-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.c3-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.c3-count
+  ami           = var.aws-ami-id
+  instance_type = local.c3-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
   tags = {
-    Name = "${var.owner}-control-center-${count.index}-us-west-2a"
+    Name = "${var.owner}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
-    Owner = "${var.owner}"
-    sshUser = "ubuntu"
-    region = "${var.region}"
+    Owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "rest" {
-  count         = "${var.rest-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.rest-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.rest-count
+  ami           = var.aws-ami-id
+  instance_type = local.rest-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
   tags = {
-    Name = "${var.owner}-rest-${count.index}-us-west-2a"
+    Name = "${var.owner}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner = "${var.owner}"
-    sshUser = "ubuntu"
-    region = "${var.region}"
+    Owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 resource "aws_instance" "ksql" {
-  count         = "${var.ksql-count}"
-  ami           = "${data.aws_ami.centos.id}"
-  instance_type = "${local.ksql-instance-type}"
-  availability_zone = "us-west-2a"
-  key_name = "${var.key_name}"
+  count         = var.ksql-count
+  ami           = var.aws-ami-id
+  instance_type = local.ksql-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
   tags = {
-    Name = "${var.owner}-ksql-${count.index}-us-west-2a"
+    Name = "${var.owner}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner = "${var.owner}"
-    sshUser = "ubuntu"
-    region = "${var.region}"
+    Owner = var.owner
+    sshUser = var.linux-user
+    region = var.region
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = "subnet-0b7590362ae2e19da"
-  vpc_security_group_ids = ["sg-0391972943fdd1bb5", "sg-086857c30f12a4858"]
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
 }
 
 // Output
 
 output "zookeeper_public_dns" {
-  value = ["${aws_instance.zookeepers.*.public_dns}"]
+  value = [aws_instance.zookeepers.*.public_dns]
 }
 
 output "broker_public_dns" {
-  value = ["${aws_instance.brokers.*.tags.brokerid}","${aws_instance.brokers.*.public_dns}"]
+  value = [aws_instance.brokers.*.tags.brokerid,aws_instance.brokers.*.public_dns]
 }
 
 output "connect_public_dns" {
-  value = ["${aws_instance.connect-cluster.*.public_dns}"]
+  value = [aws_instance.connect-cluster.*.public_dns]
 }
 
 output "schema_public_dns" {
-  value = ["${aws_instance.schema.*.public_dns}"]
+  value = [aws_instance.schema.*.public_dns]
 }
 
 output "control_center_public_dns" {
-  value = ["${aws_instance.control-center.*.public_dns}"]
+  value = [aws_instance.control-center.*.public_dns]
 }
 
 output "rest_public_dns" {
-  value = ["${aws_instance.rest.*.public_dns}"]
+  value = [aws_instance.rest.*.public_dns]
 }
 
 output "ksql_public_dns" {
-  value = ["${aws_instance.ksql.*.public_dns}"]
+  value = [aws_instance.ksql.*.public_dns]
 }
