@@ -70,9 +70,13 @@ class TerraformResults:
     def print_ip(self):
         with open(self.username + '.txt', 'w+') as f:
             f.writelines('\n'.join(self.all_ips))
+            print(file=f)
 
     def print_hosts(self):
-        print(self.template.render(self.ip_dict))
+        fname = 'hosts.yml'
+        with open(fname, "w+") as f:
+            print(self.template.render(self.ip_dict),file=f)
+
 
 if __name__ == '__main__':
     filename = sys.argv[1]
