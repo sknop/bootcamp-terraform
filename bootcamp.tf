@@ -4,15 +4,19 @@
 // Variables
 
 variable "region" {
-  default = "eu-west-2"
+  default = "eu-west-1"
 }
 
 variable "availability-zone" {
-  default = "eu-west-2c"
+  default = "eu-west-1a"
 }
 
-variable "owner" {
-  default = "sven"
+variable "owner-name" {
+  default = "Sven Erik Knop"
+}
+
+variable "owner-email" {
+ default = "sven@confluent.io"
 }
 
 variable "key-name" {
@@ -20,11 +24,9 @@ variable "key-name" {
 }
 
 variable "zk-count" {
-  default = 3
 }
 
 variable "broker-count" {
-  default = 3
 }
 
 variable "connect-count" {
@@ -68,26 +70,26 @@ provider "aws" {
 }
 
 variable "aws-ami-id"  {
-  default = "ami-00f6a0c18edb19300"
+  default = "ami-0cb5710bf2336192d"
 }
 
 variable "linux-user" {
-  default = "ubuntu"
+  default = "ubuntu" // ec2-user
 }
 
 variable "vpc-id" {
-  default = "vpc-0d491fae1728c8ab4"
+  default = "vpc-04fe6b6f949db5d53"
 }
 
 variable "subnet-id" {
-  default = "subnet-088cf9bdf1ab0bef9"
+  default = "subnet-05f5d9abc3eb10caf"
 }
 
 variable "vpc-security-group-ids" {
-  default = ["sg-0b5a6349d3f67a7cc", "sg-05cc09eb65e82b193"]
+  default = ["sg-081ef3ae3505577b4", "sg-0e2f40f9072de83ae"]
 }
 
-// Search for available availibility zones (say it quickly three times)
+// Search for available availability zones (say it quickly three times)
 
 //data "aws_availability_zones" "available" {
 //  state = "available"
@@ -105,11 +107,12 @@ resource "aws_instance" "zookeepers" {
   key_name = var.key-name
 
   tags = {
-    Name = "${var.owner}-zookeeper-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-zookeeper-${count.index}-${var.availability-zone}"
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
     zookeeperid = count.index
-    owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "zookeepers-${var.region}"
@@ -131,13 +134,14 @@ resource "aws_instance" "brokers" {
     volume_size = 1000 # 1TB
   }
   tags = {
-    Name = "${var.owner}-broker-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-broker-${count.index}-${var.availability-zone}"
     description = "broker nodes - Managed by Terraform"
     nice-name = "kafka-${count.index}"
     big-nice-name = "follower-kafka-${count.index}"
     brokerid = count.index
     role = "broker"
-    owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
@@ -159,10 +163,11 @@ resource "aws_instance" "connect-cluster" {
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
-    Name = "${var.owner}-connect-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
-    Owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "connect-${var.region}"
@@ -180,10 +185,11 @@ resource "aws_instance" "schema" {
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
-    Name = "${var.owner}-schema-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
-    Owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -201,10 +207,11 @@ resource "aws_instance" "control-center" {
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
-    Name = "${var.owner}-control-center-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
-    Owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -222,10 +229,11 @@ resource "aws_instance" "rest" {
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
-    Name = "${var.owner}-rest-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -243,10 +251,11 @@ resource "aws_instance" "ksql" {
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
-    Name = "${var.owner}-ksql-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner = var.owner
+    owner_name = var.owner-name
+    owner_email = var.owner-email
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -259,30 +268,39 @@ resource "aws_instance" "ksql" {
 
 // Output
 
-output "zookeeper_public_dns" {
-  value = [aws_instance.zookeepers.*.public_dns]
+output "zookeeper_private_dns" {
+  value = [aws_instance.zookeepers.*.private_dns]
 }
 
-output "broker_public_dns" {
-  value = [aws_instance.brokers.*.tags.brokerid,aws_instance.brokers.*.public_dns]
+output "broker_private_dns" {
+  value = [aws_instance.brokers.*.private_dns]
 }
 
-output "connect_public_dns" {
-  value = [aws_instance.connect-cluster.*.public_dns]
+output "connect_private_dns" {
+  value = [aws_instance.connect-cluster.*.private_dns]
 }
 
-output "schema_public_dns" {
-  value = [aws_instance.schema.*.public_dns]
+output "schema_private_dns" {
+  value = [aws_instance.schema.*.private_dns]
 }
 
-output "control_center_public_dns" {
-  value = [aws_instance.control-center.*.public_dns]
+output "control_center_private_dns" {
+  value = [aws_instance.control-center.*.private_dns]
 }
 
-output "rest_public_dns" {
-  value = [aws_instance.rest.*.public_dns]
+output "rest_private_dns" {
+  value = [aws_instance.rest.*.private_dns]
 }
 
-output "ksql_public_dns" {
-  value = [aws_instance.ksql.*.public_dns]
+output "ksql_private_dns" {
+  value = [aws_instance.ksql.*.private_dns]
+}
+
+
+# cluster data
+output "cluster_data" {
+  value = {
+    "ssh_username" = var.linux-user
+    "ssh_key" = var.key-name
+  }
 }
