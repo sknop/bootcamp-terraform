@@ -1,5 +1,6 @@
 from ldap3 import Connection
 import pexpect
+import zipfile
 from pprint import pprint
 import sys
 import configparser
@@ -67,12 +68,18 @@ class Generator:
         self.ldap = Connection(self.ldaps_url, user=self.username, password=self.password, auto_bind=True)
         self.logger.info(self.ldap)
 
+    def archiveFiles(self, files):
+        with zipfile.ZipFile(f"{self.owner}.zip", "w") as archive:
+            for f in files:
+                archive.write(f)
+        
     def processHostFile(self):
         with open(self.hostFile) as f:
             content = f.read()
         
         # split into lines
         lines = content.split("\n")
+        files = []
         for line in lines:
             if line != "":
                 entries = line.split(",")
@@ -83,7 +90,10 @@ class Generator:
                 (service_name, filename) = self.createServiceUser(principal, host)
 
                 self.create_keytab(service_name, filename)
+                files.append(filename)
         
+        self.archiveFiles(files)
+
     def createServiceUser(self, principal, host):
         short_host = host.split('.')[0]
         cn = f"{principal} {short_host}"
