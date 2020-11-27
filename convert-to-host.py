@@ -17,6 +17,7 @@ OUTPUT_KEYS = {
 
 CLUSTER_DATA = 'cluster_data'
 
+
 class TerraformResults:
     def __init__(self, fname, uname, tempFile):
         self.filename = fname
@@ -61,7 +62,7 @@ class TerraformResults:
 
         print()
 
-        print('Broking into sections:')
+        print('Broken into sections:')
         pp.pprint(self.ip_dict)
 
         self.print_ip()
