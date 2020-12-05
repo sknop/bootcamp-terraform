@@ -129,7 +129,7 @@ class Generator:
 
     def create_keytab(self, service_name, filename):
         # expects ktutil to be installed in the path
-        encryptions = [ "aes256-cts", "aes128-cts" ]
+        encryptions = [ "aes256-cts", "aes128-cts", "rc4-hmac" ]
 
         for encryption in encryptions:
             prompt = "ktutil:  "
