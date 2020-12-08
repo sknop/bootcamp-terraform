@@ -106,6 +106,10 @@ resource "aws_instance" "zookeepers" {
   availability_zone = var.availability-zone
   key_name = var.key-name
 
+  root_block_device {
+    volume_size = 8 # 8 GB
+  }
+
   tags = {
     Name = "${var.owner-name}-zookeeper-${count.index}-${var.availability-zone}"
     description = "zookeeper nodes - Managed by Terraform"
@@ -130,9 +134,11 @@ resource "aws_instance" "brokers" {
   availability_zone = var.availability-zone
   # security_groups = ["${var.security_group}"]
   key_name = var.key-name
+
   root_block_device {
     volume_size = 1000 # 1TB
   }
+
   tags = {
     Name = "${var.owner-name}-broker-${count.index}-${var.availability-zone}"
     description = "broker nodes - Managed by Terraform"
@@ -206,6 +212,11 @@ resource "aws_instance" "control-center" {
   instance_type = local.c3-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
+
+  root_block_device {
+    volume_size = 1000 # 1TB
+  }
+
   tags = {
     Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
@@ -228,6 +239,7 @@ resource "aws_instance" "rest" {
   instance_type = local.rest-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
+
   tags = {
     Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
@@ -250,6 +262,11 @@ resource "aws_instance" "ksql" {
   instance_type = local.ksql-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
+
+  root_block_device {
+    volume_size = 1000 # 1TB
+  }
+
   tags = {
     Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
