@@ -4,6 +4,7 @@ import zipfile
 from pprint import pprint
 import sys
 import configparser
+from pathlib import Path
 import logging
 
 # input: 
@@ -68,10 +69,14 @@ class Generator:
         self.ldap = Connection(self.ldaps_url, user=self.username, password=self.password, auto_bind=True)
         self.logger.info(self.ldap)
 
-    def archiveFiles(self, files):
+    def archiveAndDeleteFiles(self, files):
         with zipfile.ZipFile(f"{self.owner}.zip", "w") as archive:
             for f in files:
                 archive.write(f)
+
+        for f in files:
+            p = Path(f)
+            p.unlink()
         
     def processHostFile(self):
         with open(self.hostFile) as f:
@@ -92,7 +97,7 @@ class Generator:
                 self.create_keytab(service_name, filename)
                 files.append(filename)
         
-        self.archiveFiles(files)
+        self.archiveAndDeleteFiles(files)
 
     def createServiceUser(self, principal, host):
         short_host = host.split('.')[0]
@@ -131,19 +136,21 @@ class Generator:
         # expects ktutil to be installed in the path
         encryptions = [ "aes256-cts", "aes128-cts", "rc4-hmac" ]
 
-        for encryption in encryptions:
-            prompt = "ktutil:  "
-            cmd = f"addent -password -p {service_name} -k 1 -e {encryption}"
+        prompt = "ktutil:  "
 
-            child = pexpect.spawn("ktutil")
+        child = pexpect.spawn("ktutil")
+
+        for encryption in encryptions:
+            cmd = f"addent -password -p {service_name} -k 1 -e {encryption}"
             child.expect(prompt)
             child.sendline(cmd)
             child.expect("Password for .*:")
             child.sendline(self.service_password)
             child.expect(prompt)
             child.sendline(f"write_kt {filename}")
-            child.expect(prompt)
-            child.sendline("q")
+
+        child.expect(prompt)
+        child.sendline("q")
 
     def disconnectLDAP(self):
         self.ldap.unbind()
