@@ -19,6 +19,10 @@ variable "owner-email" {
  default = "sven@confluent.io"
 }
 
+variable "purpose" {
+  default = "Bootcamp"
+}
+
 variable "key-name" {
   default = "sven-bootcamp"
 }
@@ -49,17 +53,36 @@ variable "ksql-count" {
   default = 0
 }
 
-// instance types
+variable "zk-instance-type" {
+  default = "t3a.large"
+}
 
-locals {
-  zk-instance-type = "t3a.large"
-  broker-instance-type = "t3a.large"
-  schema-instance-type = "t3a.large"
-  connect-instance-type = "t3a.large"
-  rest-instance-type = "t3a.large"
-  c3-instance-type = "t3a.large"
-  ksql-instance-type = "t3a.large"
-  client-instance-type = "t3a.large"
+variable "broker-instance-type" {
+  default = "t3a.large"
+}
+
+variable "schema-instance-type" {
+  default = "t3a.large"
+}
+
+variable "connect-instance-type" {
+  default = "t3a.large"
+}
+
+variable "rest-instance-type" {
+  default = "t3a.large"
+}
+
+variable "c3-instance-type" {
+  default = "t3a.large"
+}
+
+variable "ksql-instance-type" {
+  default = "t3a.large"
+}
+
+variable "client-instance-type" {
+  default = "t3a.large"
 }
 
 // Provider
@@ -102,7 +125,7 @@ variable "vpc-security-group-ids" {
 resource "aws_instance" "zookeepers" {
   count         = var.zk-count
   ami           = var.aws-ami-id
-  instance_type = local.zk-instance-type
+  instance_type = var.zk-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
 
@@ -117,6 +140,7 @@ resource "aws_instance" "zookeepers" {
     zookeeperid = count.index
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "zookeepers-${var.region}"
@@ -130,7 +154,7 @@ resource "aws_instance" "zookeepers" {
 resource "aws_instance" "brokers" {
   count         = var.broker-count
   ami           = var.aws-ami-id
-  instance_type = local.broker-instance-type
+  instance_type = var.broker-instance-type
   availability_zone = var.availability-zone
   # security_groups = ["${var.security_group}"]
   key_name = var.key-name
@@ -148,6 +172,7 @@ resource "aws_instance" "brokers" {
     role = "broker"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
@@ -165,7 +190,7 @@ resource "aws_instance" "brokers" {
 resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
   ami           = var.aws-ami-id
-  instance_type = local.connect-instance-type
+  instance_type = var.connect-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
@@ -174,6 +199,7 @@ resource "aws_instance" "connect-cluster" {
     role = "connect"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "connect-${var.region}"
@@ -187,7 +213,7 @@ resource "aws_instance" "connect-cluster" {
 resource "aws_instance" "schema" {
   count         = var.schema-count
   ami           = var.aws-ami-id
-  instance_type = local.schema-instance-type
+  instance_type = var.schema-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
   tags = {
@@ -196,6 +222,7 @@ resource "aws_instance" "schema" {
     role = "schema"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -209,7 +236,7 @@ resource "aws_instance" "schema" {
 resource "aws_instance" "control-center" {
   count         = var.c3-count
   ami           = var.aws-ami-id
-  instance_type = local.c3-instance-type
+  instance_type = var.c3-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
 
@@ -223,6 +250,7 @@ resource "aws_instance" "control-center" {
     role = "schema"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -236,7 +264,7 @@ resource "aws_instance" "control-center" {
 resource "aws_instance" "rest" {
   count         = var.rest-count
   ami           = var.aws-ami-id
-  instance_type = local.rest-instance-type
+  instance_type = var.rest-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
 
@@ -246,6 +274,7 @@ resource "aws_instance" "rest" {
     role = "schema"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -259,7 +288,7 @@ resource "aws_instance" "rest" {
 resource "aws_instance" "ksql" {
   count         = var.ksql-count
   ami           = var.aws-ami-id
-  instance_type = local.ksql-instance-type
+  instance_type = var.ksql-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
 
@@ -273,6 +302,7 @@ resource "aws_instance" "ksql" {
     role = "schema"
     owner_name = var.owner-name
     owner_email = var.owner-email
+    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
