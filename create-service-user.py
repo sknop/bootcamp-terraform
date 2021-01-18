@@ -1,11 +1,11 @@
-from ldap3 import Connection
-import pexpect
-import zipfile
-from pprint import pprint
 import sys
 import configparser
 from pathlib import Path
 import logging
+
+from ldap3 import Connection
+import pexpect
+import zipfile
 
 # input: 
 #   configuration file (LDAPS URL, username, password, REALM, password)

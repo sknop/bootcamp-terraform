@@ -1,9 +1,11 @@
 from __future__ import print_function
 
-from jinja2 import Template
+import argparse
 import json
-import sys
+
+from jinja2 import Template
 import pprint
+
 
 OUTPUT_KEYS = {
     'kafka_broker': 'broker_private_dns',
@@ -108,10 +110,19 @@ class TerraformResults:
                     print(f"{key},{ip}", file=f)
 
 
-if __name__ == '__main__':
-    filename = sys.argv[1]
-    username = sys.argv[2]
-    template = sys.argv[3]
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Reads a JSON output from terraform and converts it into an Ansible inventory/"
+    )
 
-    results = TerraformResults(filename, username, template)
+    parser.add_argument("input", help="JSON input file to read")
+    parser.add_argument("keypair", help="Name of the key pair to use for AWS instances")
+    parser.add_argument("--template", help="Inventory template (default = hosts.j2)", default="./hosts.j2")
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = parse_arguments()
+    results = TerraformResults(args.input, args.keypair, args.template)
     results.output()
