@@ -130,7 +130,7 @@ resource "aws_instance" "zookeepers" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 8 # 8 GB
+    volume_size = 50
   }
 
   tags = {
