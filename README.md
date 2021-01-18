@@ -2,6 +2,11 @@
 
 Confluent Bootcamp conform terraform scripts and configuration file.
 
+## preparation
+
+- (optional) create a Python virtual environment
+- `pip install -r requirements.txt` 
+
 ## convert-to-host.py
 
 Transforms the output of `terraform output -json` into a Ansible hosts.yml used by cp-ansible.
