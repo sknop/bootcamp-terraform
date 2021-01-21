@@ -116,7 +116,7 @@ def parse_arguments():
     )
 
     parser.add_argument("input", help="JSON input file to read")
-    parser.add_argument("keypair", help="Name of the key pair to use for AWS instances")
+    parser.add_argument("username", help="Name of the user for the output files")
     parser.add_argument("--template", help="Inventory template (default = hosts.j2)", default="./hosts.j2")
 
     return parser.parse_args()
@@ -124,5 +124,5 @@ def parse_arguments():
 
 if __name__ == '__main__':
     args = parse_arguments()
-    results = TerraformResults(args.input, args.keypair, args.template)
+    results = TerraformResults(args.input, args.username, args.template)
     results.output()
