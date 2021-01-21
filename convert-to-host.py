@@ -41,6 +41,7 @@ class TerraformResults:
     def __init__(self, fname, uname, tempFile):
         self.filename = fname
         self.username = uname
+        self.tempFile = tempFile
         self.template = create_template(tempFile)
 
         self.json_output = self.parse_json()
@@ -97,7 +98,7 @@ class TerraformResults:
             print(file=f)
 
     def print_hosts(self):
-        host_filename = 'hosts.yml'
+        host_filename = self.tempFile.replace('.j2','.yml')
         with open(host_filename, "w+") as f:
             print(self.template.render(self.ip_dict), file=f)
 
