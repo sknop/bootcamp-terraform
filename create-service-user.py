@@ -1,11 +1,11 @@
+from ldap3 import Connection
+import pexpect
+import zipfile
+from pprint import pprint
 import sys
 import configparser
 from pathlib import Path
 import logging
-
-from ldap3 import Connection
-import pexpect
-import zipfile
 
 # input: 
 #   configuration file (LDAPS URL, username, password, REALM, password)
@@ -146,8 +146,9 @@ class Generator:
             child.sendline(cmd)
             child.expect("Password for .*:")
             child.sendline(self.service_password)
-            child.expect(prompt)
-            child.sendline(f"write_kt {filename}")
+
+        child.expect(prompt)
+        child.sendline(f"write_kt {filename}")
 
         child.expect(prompt)
         child.sendline("q")
