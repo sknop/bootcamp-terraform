@@ -138,8 +138,8 @@ resource "aws_instance" "zookeepers" {
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
     zookeeperid = count.index
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -170,8 +170,8 @@ resource "aws_instance" "brokers" {
     big-nice-name = "follower-kafka-${count.index}"
     brokerid = count.index
     role = "broker"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
@@ -197,8 +197,8 @@ resource "aws_instance" "connect-cluster" {
     Name = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -220,8 +220,8 @@ resource "aws_instance" "schema" {
     Name = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -248,8 +248,8 @@ resource "aws_instance" "control-center" {
     Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -272,8 +272,8 @@ resource "aws_instance" "rest" {
     Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -300,8 +300,8 @@ resource "aws_instance" "ksql" {
     Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    owner_name = var.owner-name
-    owner_email = var.owner-email
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
