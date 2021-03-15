@@ -1,6 +1,6 @@
 # Change these
-Owner_Email = "sven@confluent.io"
-Owner_Name = "sven"
+owner-email = "sven@confluent.io"
+owner-name = "sven"
 key-name = "sven-ireland-sa"
 purpose = "bootcamp-prep"
 
