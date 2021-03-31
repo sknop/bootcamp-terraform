@@ -91,11 +91,17 @@ class TerraformResults:
         self.print_ip()
         self.print_hosts()
         self.print_kerberos()
+        self.print_json()
 
     def print_ip(self):
         with open(self.username + '.txt', 'w+') as f:
             f.writelines('\n'.join(self.all_ips))
             print(file=f)
+
+    def print_json(self):
+        data = { x:y for (x,y) in self.ip_dict.items() if x not in 'cluster_data'}
+        with open(self.username + '.json', 'w+') as f:
+            json.dump(data, f, indent=4)
 
     def print_hosts(self):
         host_filename = self.tempFile.replace('.j2','.yml')
