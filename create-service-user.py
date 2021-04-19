@@ -28,7 +28,7 @@ class Generator:
 
         self.init_logging()
         self.initialise()
-        self.connect_ldap()
+        self.ldap = self.connect_ldap()
 
         self.hosts = self.load_host_file()
         self.process_host_file()
@@ -70,8 +70,10 @@ class Generator:
         self.logger.info(f"{key} : {parser[key]}")
 
     def connect_ldap(self):
-        self.ldap = Connection(self.ldaps_url, user=self.username, password=self.password, auto_bind=True)
-        self.logger.info(self.ldap)
+        ldap = Connection(self.ldaps_url, user=self.username, password=self.password, auto_bind=True)
+        self.logger.info(ldap)
+
+        return ldap
 
     def archive_and_delete_files(self, files):
         with zipfile.ZipFile(f"{self.owner}.zip", "w") as archive:
