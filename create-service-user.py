@@ -1,3 +1,4 @@
+import os
 from ldap3 import Connection
 import pexpect
 import zipfile
@@ -8,15 +9,14 @@ from pathlib import Path
 import json
 import logging
 
-
 # input:
 #   configuration file (LDAPS URL, username, password, REALM, password)
 #   file containing list of 
 #       <principal>, <hostname>
 
 
-class ServiceUser:
-    pass
+KERBEROS_DIRECTORY = "kerberos"
+SSL_DIRECTORY = "ssl"
 
 
 class Generator:
@@ -25,16 +25,21 @@ class Generator:
         self.configFile = config_file
         self.hostFile = host_file
         self.owner = owner_name
+        self.directories = [KERBEROS_DIRECTORY, SSL_DIRECTORY]
 
         self.init_logging()
         self.initialise()
         self.ldap = self.connect_ldap()
+
+        self.ensure_directories()
 
         self.hosts = self.load_host_file()
         self.process_host_file()
 
         self.disconnect_ldap()
 
+        self.destroy_directories()
+        
     def initialise(self):
         parser = configparser.ConfigParser()
         with open(self.configFile) as f:
@@ -96,14 +101,14 @@ class Generator:
         for principal, hosts in self.hosts.items():
             for host in hosts:
                 print(f"{principal} --> {host}")
-                (service_name, filename) = self.create_service_user(principal, host)
+                (service_name, filename) = self.create_service_user(KERBEROS_DIRECTORY, principal, host)
 
                 self.create_keytab(service_name, filename)
                 files.append(filename)
 
         self.archive_and_delete_files(files)
 
-    def create_service_user(self, principal, host):
+    def create_service_user(self, basedir, principal, host):
         short_host = host.split('.')[0]
         cn = f"{principal} {short_host}"
         dn = f"CN={cn},{self.base_dn}"
@@ -133,7 +138,7 @@ class Generator:
         self.ldap.modify(dn, {"userAccountControl": [('MODIFY_REPLACE', 66048)]})
         self.logger.info(self.ldap.result)
 
-        filename = f"{principal}-{short_host}.keytab"
+        filename = os.path.join(basedir, f"{principal}-{short_host}.keytab")
 
         return service_name, filename
 
@@ -160,6 +165,14 @@ class Generator:
 
     def disconnect_ldap(self):
         self.ldap.unbind()
+
+    def ensure_directories(self):
+        for p in self.directories:
+            os.makedirs(p, exist_ok=True)
+
+    def destroy_directories(self):
+        for p in self.directories:
+            os.removedirs(p)
 
 
 if __name__ == '__main__':
