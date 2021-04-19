@@ -5,15 +5,17 @@ from pprint import pprint
 import sys
 import configparser
 from pathlib import Path
+import json
 import logging
 
-# input: 
+
+# input:
 #   configuration file (LDAPS URL, username, password, REALM, password)
 #   file containing list of 
 #       <principal>, <hostname>
 
 
-class ServiceUser :
+class ServiceUser:
     pass
 
 
@@ -23,11 +25,12 @@ class Generator:
         self.configFile = config_file
         self.hostFile = host_file
         self.owner = owner_name
-        
+
         self.init_logging()
         self.initialise()
         self.connect_ldap()
 
+        self.hosts = self.load_host_file()
         self.process_host_file()
 
         self.disconnect_ldap()
@@ -35,7 +38,7 @@ class Generator:
     def initialise(self):
         parser = configparser.ConfigParser()
         with open(self.configFile) as f:
-            lines = '[top]\n' + f.read() # hack, do not want [top] in config file, so add it here
+            lines = '[top]\n' + f.read()  # hack, do not want [top] in config file, so add it here
             parser.read_string(lines)
 
         # we expect certain entries in the config file, or we will bail. There are no defaults
@@ -49,7 +52,7 @@ class Generator:
         self.set_config('base_dn', parser)
 
     def init_logging(self):
-        self.logger.setLevel(logging.DEBUG) # change to INFO or DEBUG for more output
+        self.logger.setLevel(logging.DEBUG)  # change to INFO or DEBUG for more output
 
         handler = logging.StreamHandler()
         handler.setLevel(logging.INFO)
@@ -79,26 +82,23 @@ class Generator:
             p = Path(f)
             p.unlink()
 
-    # TODO This needs to be changed to process a JSON file instead
-    def process_host_file(self):
+    def load_host_file(self):
         with open(self.hostFile) as f:
             content = f.read()
-        
-        # split into lines
-        lines = content.split("\n")
-        files = []
-        for line in lines:
-            if line != "":
-                entries = line.split(",")
-                principal = entries[0]
-                host = entries[1]
 
+        return json.loads(content)
+
+    def process_host_file(self):
+        files = []
+
+        for principal, hosts in self.hosts.items():
+            for host in hosts:
                 print(f"{principal} --> {host}")
                 (service_name, filename) = self.create_service_user(principal, host)
 
                 self.create_keytab(service_name, filename)
                 files.append(filename)
-        
+
         self.archive_and_delete_files(files)
 
     def create_service_user(self, principal, host):
@@ -118,7 +118,7 @@ class Generator:
 
         self.logger.info(user_attrs)
 
-        self.ldap.add(dn, attributes = user_attrs)
+        self.ldap.add(dn, attributes=user_attrs)
         self.logger.info(self.ldap.result)
 
         # set the password
@@ -128,16 +128,16 @@ class Generator:
 
         # set the account active and password non-expiring
 
-        self.ldap.modify(dn, {"userAccountControl" : [('MODIFY_REPLACE', 66048)]})
+        self.ldap.modify(dn, {"userAccountControl": [('MODIFY_REPLACE', 66048)]})
         self.logger.info(self.ldap.result)
-    
+
         filename = f"{principal}-{short_host}.keytab"
 
         return service_name, filename
 
     def create_keytab(self, service_name, filename):
         # expects ktutil to be installed in the path
-        encryptions = [ "aes256-cts", "aes128-cts", "rc4-hmac" ]
+        encryptions = ["aes256-cts", "aes128-cts", "rc4-hmac"]
 
         prompt = "ktutil:  "
 
@@ -170,5 +170,3 @@ if __name__ == '__main__':
     owner = sys.argv[3]
 
     generator = Generator(configFile, hostFile, owner)
-
-

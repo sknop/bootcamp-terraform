@@ -6,7 +6,6 @@ import json
 from jinja2 import Template
 import pprint
 
-
 OUTPUT_KEYS = {
     'kafka_broker': 'broker_private_dns',
     'kafka_connect': 'connect_private_dns',
@@ -99,12 +98,12 @@ class TerraformResults:
             print(file=f)
 
     def print_json(self):
-        data = { x:y for (x,y) in self.ip_dict.items() if x not in 'cluster_data'}
+        data = {KERBEROS_PRINCIPALS[x]: y for (x, y) in self.ip_dict.items() if x not in 'cluster_data'}
         with open(self.username + '.json', 'w+') as f:
             json.dump(data, f, indent=4)
 
     def print_hosts(self):
-        host_filename = self.tempFile.replace('.j2','.yml')
+        host_filename = self.tempFile.replace('.j2', '.yml')
         with open(host_filename, "w+") as f:
             print(self.template.render(self.ip_dict), file=f)
 
