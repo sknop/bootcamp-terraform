@@ -87,9 +87,9 @@ class TerraformResults:
         print('Broken into sections:')
         pp.pprint(self.ip_dict)
 
-        self.print_ip()
+        # self.print_ip()
         self.print_hosts()
-        self.print_kerberos()
+        # self.print_kerberos()
         self.print_json()
 
     def print_ip(self):
