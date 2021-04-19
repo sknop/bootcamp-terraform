@@ -12,22 +12,25 @@ import logging
 #   file containing list of 
 #       <principal>, <hostname>
 
+
 class ServiceUser :
     pass
 
+
 class Generator:
-    def __init__(self, configFile, hostFile, owner):
-        self.configFile = configFile
-        self.hostFile = hostFile
-        self.owner = owner
+    def __init__(self, config_file, host_file, owner_name):
+        self.logger = logging.getLogger('create-service-user')
+        self.configFile = config_file
+        self.hostFile = host_file
+        self.owner = owner_name
         
-        self.initLogging()
+        self.init_logging()
         self.initialise()
-        self.connectLDAP()
+        self.connect_ldap()
 
-        self.processHostFile()
+        self.process_host_file()
 
-        self.disconnectLDAP()
+        self.disconnect_ldap()
 
     def initialise(self):
         parser = configparser.ConfigParser()
@@ -38,16 +41,14 @@ class Generator:
         # we expect certain entries in the config file, or we will bail. There are no defaults
 
         parser = parser['top']
-        self.setConfig('ldaps_url', parser)
-        self.setConfig('username', parser)
-        self.setConfig('password', parser)
-        self.setConfig('realm', parser)
-        self.setConfig('service_password', parser)
-        self.setConfig('base_dn', parser)
+        self.set_config('ldaps_url', parser)
+        self.set_config('username', parser)
+        self.set_config('password', parser)
+        self.set_config('realm', parser)
+        self.set_config('service_password', parser)
+        self.set_config('base_dn', parser)
 
-
-    def initLogging(self):
-        self.logger = logging.getLogger('create-service-user')
+    def init_logging(self):
         self.logger.setLevel(logging.DEBUG) # change to INFO or DEBUG for more output
 
         handler = logging.StreamHandler()
@@ -58,18 +59,18 @@ class Generator:
 
         self.logger.addHandler(handler)
 
-    def setConfig(self, key, parser):
+    def set_config(self, key, parser):
         if key not in parser:
             self.logger.error(f"Cannot find {key} in config file. Aborting")
             sys.exit(2)
         self.__setattr__(key, parser[key])
         self.logger.info(f"{key} : {parser[key]}")
 
-    def connectLDAP(self):
+    def connect_ldap(self):
         self.ldap = Connection(self.ldaps_url, user=self.username, password=self.password, auto_bind=True)
         self.logger.info(self.ldap)
 
-    def archiveAndDeleteFiles(self, files):
+    def archive_and_delete_files(self, files):
         with zipfile.ZipFile(f"{self.owner}.zip", "w") as archive:
             for f in files:
                 archive.write(f)
@@ -77,8 +78,9 @@ class Generator:
         for f in files:
             p = Path(f)
             p.unlink()
-        
-    def processHostFile(self):
+
+    # TODO This needs to be changed to process a JSON file instead
+    def process_host_file(self):
         with open(self.hostFile) as f:
             content = f.read()
         
@@ -92,26 +94,27 @@ class Generator:
                 host = entries[1]
 
                 print(f"{principal} --> {host}")
-                (service_name, filename) = self.createServiceUser(principal, host)
+                (service_name, filename) = self.create_service_user(principal, host)
 
                 self.create_keytab(service_name, filename)
                 files.append(filename)
         
-        self.archiveAndDeleteFiles(files)
+        self.archive_and_delete_files(files)
 
-    def createServiceUser(self, principal, host):
+    def create_service_user(self, principal, host):
         short_host = host.split('.')[0]
         cn = f"{principal} {short_host}"
         dn = f"CN={cn},{self.base_dn}"
         service_name = f"{principal}/{host}"
         user_principal_name = f"{service_name}@{self.realm}"
 
-        user_attrs = {}
-        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
-        user_attrs['cn'] = cn
-        user_attrs['accountExpires'] = '0'
-        user_attrs['userPrincipalName'] = user_principal_name
-        user_attrs['servicePrincipalName'] = service_name
+        user_attrs = {
+            'objectClass': ['top', 'person', 'organizationalPerson', 'user'],
+            'cn': cn,
+            'accountExpires': '0',
+            'userPrincipalName': user_principal_name,
+            'servicePrincipalName': service_name
+        }
 
         self.logger.info(user_attrs)
 
@@ -130,7 +133,7 @@ class Generator:
     
         filename = f"{principal}-{short_host}.keytab"
 
-        return (service_name,filename)
+        return service_name, filename
 
     def create_keytab(self, service_name, filename):
         # expects ktutil to be installed in the path
@@ -153,8 +156,9 @@ class Generator:
         child.expect(prompt)
         child.sendline("q")
 
-    def disconnectLDAP(self):
+    def disconnect_ldap(self):
         self.ldap.unbind()
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
