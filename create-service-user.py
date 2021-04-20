@@ -2,7 +2,7 @@ import os
 from ldap3 import Connection
 import pexpect
 import zipfile
-from pprint import pprint
+import subprocess
 import sys
 import configparser
 from pathlib import Path
@@ -106,6 +106,9 @@ class Generator:
                 self.create_keytab(service_name, filename)
                 files.append(filename)
 
+                filename = self.create_certificate(SSL_DIRECTORY, principal, host)
+                files.append(filename)
+
         self.archive_and_delete_files(files)
 
     def create_service_user(self, basedir, principal, host):
@@ -162,6 +165,39 @@ class Generator:
 
         child.expect(prompt)
         child.sendline("q")
+
+    def create_certificate(self, basedir, principal, host):
+        # expect vault, openssl and keytool to be installed in the path
+        filename = os.path.join(basedir, f"{host}-keystore.jks")
+        pem_filename = os.path.join(basedir, f"{host}.pem")
+        p12_filename = os.path.join(basedir, f"{host}.p12")
+
+        self.logger.info(f"Creating certificate with {pem_filename} {p12_filename} {filename}")
+
+        command = f"vault write -field certificate kafka-int-ca/issue/kafka-server "\
+                  "common_name=kafka.servers.kafka.bootcamp.confluent.io alt_names={host} format=pem_bundle".split()
+        with open(pem_filename, 'w') as f:
+            process = subprocess.Popen(command, stdout=f, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            self.logger.info(stderr.decode('utf-8'))
+
+        command = f"openssl pkcs12 -inkey {pem_filename} -in {pem_filename} "\
+                  f"-name {host} -export -out {p12_filename} -password pass:changeme".split()
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        self.logger.info(stderr.decode('utf-8'))
+
+        command = f"keytool -importkeystore -srcstorepass changeme -deststorepass changeme -destkeystore "\
+                  f"{filename} -srckeystore {p12_filename} -srcstoretype PKCS12".split()
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        self.logger.info(stderr.decode('utf-8'))
+
+        # remove intermediates
+        os.unlink(pem_filename)
+        os.unlink(p12_filename)
+
+        return filename
 
     def disconnect_ldap(self):
         self.ldap.unbind()
