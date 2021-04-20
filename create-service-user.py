@@ -175,7 +175,7 @@ class Generator:
         self.logger.info(f"Creating certificate with {pem_filename} {p12_filename} {filename}")
 
         command = f"vault write -field certificate kafka-int-ca/issue/kafka-server "\
-                  "common_name=kafka.servers.kafka.bootcamp.confluent.io alt_names={host} format=pem_bundle".split()
+                  f"common_name=kafka.servers.kafka.bootcamp.confluent.io alt_names={host} format=pem_bundle".split()
         with open(pem_filename, 'w') as f:
             process = subprocess.Popen(command, stdout=f, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
