@@ -20,12 +20,13 @@ SSL_DIRECTORY = "ssl"
 
 
 class Generator:
-    def __init__(self, config_file, host_file, owner_name):
-        self.logger = logging.getLogger('create-service-user')
-        self.configFile = config_file
-        self.hostFile = host_file
+    def __init__(self, config_file, host_entries, owner_name):
+        self.logger = logging.getLogger('bootcamp')
+        self.config_file = config_file
+        self.hosts = host_entries
         self.owner = owner_name
         self.directories = [KERBEROS_DIRECTORY, SSL_DIRECTORY]
+        self.zip_file_name = f"{self.owner}.zip"
 
         self.init_logging()
         self.initialise()
@@ -33,7 +34,6 @@ class Generator:
 
         self.ensure_directories()
 
-        self.hosts = self.load_host_file()
         self.process_host_file()
 
         self.disconnect_ldap()
@@ -42,7 +42,7 @@ class Generator:
         
     def initialise(self):
         parser = configparser.ConfigParser()
-        with open(self.configFile) as f:
+        with open(self.config_file) as f:
             lines = '[top]\n' + f.read()  # hack, do not want [top] in config file, so add it here
             parser.read_string(lines)
 
@@ -57,7 +57,7 @@ class Generator:
         self.set_config('base_dn', parser)
 
     def init_logging(self):
-        self.logger.setLevel(logging.DEBUG)  # change to INFO or DEBUG for more output
+        self.logger.setLevel(logging.INFO)  # change to INFO or DEBUG for more output
 
         handler = logging.StreamHandler()
         handler.setLevel(logging.INFO)
@@ -81,19 +81,13 @@ class Generator:
         return ldap
 
     def archive_and_delete_files(self, files):
-        with zipfile.ZipFile(f"{self.owner}.zip", "w") as archive:
+        with zipfile.ZipFile(self.zip_file_name, "w") as archive:
             for f in files:
                 archive.write(f)
 
         for f in files:
             p = Path(f)
             p.unlink()
-
-    def load_host_file(self):
-        with open(self.hostFile) as f:
-            content = f.read()
-
-        return json.loads(content)
 
     def process_host_file(self):
         files = []
@@ -211,6 +205,13 @@ class Generator:
             os.removedirs(p)
 
 
+def load_host_file(filename):
+    with open(filename) as f:
+        content = f.read()
+
+    return json.loads(content)
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage: " + sys.argv[0] + " <config-file> <host-file> <owner>", file=sys.stderr)
@@ -220,4 +221,7 @@ if __name__ == '__main__':
     hostFile = sys.argv[2]
     owner = sys.argv[3]
 
-    generator = Generator(configFile, hostFile, owner)
+    hosts = load_host_file(hostFile)
+
+    generator = Generator(configFile, hosts, owner)
+    print(f"Created {generator.zip_file_name}")
