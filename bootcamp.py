@@ -20,13 +20,17 @@ SSL_DIRECTORY = "ssl"
 
 
 class Generator:
-    def __init__(self, config_file, host_entries, owner_name):
+    def __init__(self, base_dir, config_file, host_entries, owner_name):
         self.logger = logging.getLogger('bootcamp')
+        self.base_dir = base_dir
         self.config_file = config_file
         self.hosts = host_entries
         self.owner = owner_name
-        self.directories = [KERBEROS_DIRECTORY, SSL_DIRECTORY]
-        self.zip_file_name = f"{self.owner}.zip"
+        self.directories = [
+            os.path.join(self.base_dir, KERBEROS_DIRECTORY),
+            os.path.join(self.base_dir, SSL_DIRECTORY)
+        ]
+        self.zip_file_name = os.path.join(self.base_dir, f"{self.owner}.zip")
 
         self.init_logging()
         self.initialise()
@@ -217,11 +221,11 @@ if __name__ == '__main__':
         print("Usage: " + sys.argv[0] + " <config-file> <host-file> <owner>", file=sys.stderr)
         sys.exit(1)
 
-    configFile = sys.argv[1]
-    hostFile = sys.argv[2]
+    config = sys.argv[1]
+    host_file = sys.argv[2]
     owner = sys.argv[3]
 
-    hosts = load_host_file(hostFile)
+    hosts = load_host_file(host_file)
 
-    generator = Generator(configFile, hosts, owner)
+    generator = Generator('', config, hosts, owner)
     print(f"Created {generator.zip_file_name}")
