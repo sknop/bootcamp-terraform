@@ -26,11 +26,8 @@ class Generator:
         self.config_file = config_file
         self.hosts = host_entries
         self.owner = owner_name
-        self.directories = [
-            os.path.join(self.base_dir, KERBEROS_DIRECTORY),
-            os.path.join(self.base_dir, SSL_DIRECTORY)
-        ]
-        self.zip_file_name = os.path.join(self.base_dir, f"{self.owner}.zip")
+        self.directories = [KERBEROS_DIRECTORY, SSL_DIRECTORY]
+        self.zip_file_name = f"{self.owner}.zip"
 
         self.init_logging()
         self.initialise()
@@ -99,12 +96,12 @@ class Generator:
         for principal, hosts in self.hosts.items():
             for host in hosts:
                 print(f"{principal} --> {host}")
-                (service_name, filename) = self.create_service_user(KERBEROS_DIRECTORY, principal, host)
+                (service_name, filename) = self.create_service_user(self.directories[0], principal, host)
 
                 self.create_keytab(service_name, filename)
                 files.append(filename)
 
-                filename = self.create_certificate(SSL_DIRECTORY, principal, host)
+                filename = self.create_certificate(self.directories[1], principal, host)
                 files.append(filename)
 
         self.archive_and_delete_files(files)
@@ -201,6 +198,9 @@ class Generator:
         self.ldap.unbind()
 
     def ensure_directories(self):
+        # keep everything relative to the base directory
+        os.chdir(self.base_dir)
+
         for p in self.directories:
             os.makedirs(p, exist_ok=True)
 
@@ -227,5 +227,5 @@ if __name__ == '__main__':
 
     hosts = load_host_file(host_file)
 
-    generator = Generator('', config, hosts, owner)
+    generator = Generator('.', config, hosts, owner)
     print(f"Created {generator.zip_file_name}")

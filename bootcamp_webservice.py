@@ -5,6 +5,7 @@ from bootcamp import Generator
 import json
 import sys
 import os
+import tempfile
 
 app = Flask(__name__)
 
@@ -14,12 +15,16 @@ def invoke_generator():
     data_bytes = request.data
     hosts = json.loads(data_bytes)
 
-    generator = Generator(app.config['config-file'], hosts, "web-user")
-    filename = generator.zip_file_name
+    tmpdir = tempfile.TemporaryDirectory(prefix='bootcamp_')
+
+    generator = Generator(tmpdir.name, app.config['config-file'], hosts, "web-user")
+    filename = os.path.join(tmpdir.name, generator.zip_file_name)
 
     result = send_file(filename, attachment_filename=filename, mimetype='application/zip')
 
     os.unlink(filename)
+
+    tmpdir.cleanup()
 
     return result
 
