@@ -1,4 +1,5 @@
 #!/usrbin/env python3
+import logging
 
 from flask import Flask, request, send_file
 from bootcamp import Generator
@@ -32,6 +33,15 @@ def invoke_generator():
     tmpdir.cleanup()
 
     return result
+
+
+@app.route('/verify', methods=['POST'])
+def verify_input():
+    logger = logging.getLogger('bootcamp')
+    data_bytes = request.data
+    logger.info(data_bytes)
+
+    return data_bytes
 
 
 def find_config_file():
