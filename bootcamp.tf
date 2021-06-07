@@ -205,6 +205,10 @@ resource "aws_instance" "connect-cluster" {
     role_region = "connect-${var.region}"
   }
 
+  root_block_device {
+    volume_size = 100 # 1TB
+  }
+
   subnet_id = var.subnet-id
   vpc_security_group_ids = var.vpc-security-group-ids
   associate_public_ip_address = true
@@ -226,6 +230,10 @@ resource "aws_instance" "schema" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+  }
+
+  root_block_device {
+    volume_size = 100 # 1TB
   }
 
   subnet_id = var.subnet-id
@@ -267,6 +275,10 @@ resource "aws_instance" "rest" {
   instance_type = var.rest-instance-type
   availability_zone = var.availability-zone
   key_name = var.key-name
+
+  root_block_device {
+    volume_size = 100 # 1TB
+  }
 
   tags = {
     Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
