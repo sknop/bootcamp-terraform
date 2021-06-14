@@ -90,7 +90,8 @@ class TerraformResults:
 #       # self.print_ip()
 #       self.print_hosts()
 #       # self.print_kerberos()
-       
+
+       self.print_hosts()
        self.print_json()
        print(f"Generated JSON file for certificates: {self.username}.json")
 
