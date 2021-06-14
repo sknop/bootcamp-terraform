@@ -76,24 +76,9 @@ class TerraformResults:
         return self.json_output[name]['value']
 
     def output(self):
-#        pp = pprint.PrettyPrinter(indent=4)
-#
-#       print('All IPs:')
-#       for ip in self.all_ips:
-#           print(ip)
-#
-#       print()
-#
-#       print('Broken into sections:')
-#       pp.pprint(self.ip_dict)
-#
-#       # self.print_ip()
-#       self.print_hosts()
-#       # self.print_kerberos()
-
-       self.print_hosts()
-       self.print_json()
-       print(f"Generated JSON file for certificates: {self.username}.json")
+        self.print_hosts()
+        self.print_json()
+        print(f"Generated JSON file for certificates: {self.username}.json")
 
     def print_ip(self):
         with open(self.username + '.txt', 'w+') as f:
