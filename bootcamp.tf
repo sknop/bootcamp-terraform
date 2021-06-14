@@ -85,10 +85,14 @@ variable "client-instance-type" {
   default = "t3a.large"
 }
 
+variable "aws-profile" {
+  default = "default"
+}
+
 // Provider
 
 provider "aws" {
-  profile    = "default"
+  profile    = var.aws-profile
   region     = var.region
 }
 
