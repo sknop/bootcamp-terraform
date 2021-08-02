@@ -34,3 +34,5 @@ c3-instance-type = "r5.2xlarge"
 ksql-instance-type = "t3a.large"
 client-instance-type = "t3a.large"
 
+hosted-zone-id = "Z062492024YHYM5K442Z8"
+
