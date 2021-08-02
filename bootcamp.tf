@@ -89,6 +89,9 @@ variable "aws-profile" {
   default = "default"
 }
 
+variable "hosted-zone-id" {
+}
+
 // Provider
 
 provider "aws" {
@@ -155,6 +158,15 @@ resource "aws_instance" "zookeepers" {
   associate_public_ip_address = true
 }
 
+resource "aws_route53_record" "zookeepers" {
+  count = var.zk-count
+  zone_id = var.hosted-zone-id
+  name = "zookeeper-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.zookeepers.*.private_ip, count.index)}"]
+}
+
 resource "aws_instance" "brokers" {
   count         = var.broker-count
   ami           = var.aws-ami-id
@@ -191,6 +203,15 @@ resource "aws_instance" "brokers" {
   associate_public_ip_address = true
 }
 
+resource "aws_route53_record" "brokers" {
+  count = var.broker-count
+  zone_id = var.hosted-zone-id
+  name = "kafka-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.brokers.*.private_ip, count.index)}"]
+}
+
 resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
   ami           = var.aws-ami-id
@@ -218,6 +239,15 @@ resource "aws_instance" "connect-cluster" {
   associate_public_ip_address = true
 }
 
+resource "aws_route53_record" "connect-cluster" {
+  count = var.connect-count
+  zone_id = var.hosted-zone-id
+  name = "connect-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.connect-cluster.*.private_ip, count.index)}"]
+}
+
 resource "aws_instance" "schema" {
   count         = var.schema-count
   ami           = var.aws-ami-id
@@ -243,6 +273,15 @@ resource "aws_instance" "schema" {
   subnet_id = var.subnet-id
   vpc_security_group_ids = var.vpc-security-group-ids
   associate_public_ip_address = true
+}
+
+resource "aws_route53_record" "schema" {
+  count = var.schema-count
+  zone_id = var.hosted-zone-id
+  name = "schema-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.schema.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "control-center" {
@@ -273,6 +312,15 @@ resource "aws_instance" "control-center" {
   associate_public_ip_address = true
 }
 
+resource "aws_route53_record" "control-center" {
+  count = var.c3-count
+  zone_id = var.hosted-zone-id
+  name = "controlcenter-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.control-center.*.private_ip, count.index)}"]
+}
+
 resource "aws_instance" "rest" {
   count         = var.rest-count
   ami           = var.aws-ami-id
@@ -301,6 +349,15 @@ resource "aws_instance" "rest" {
   associate_public_ip_address = true
 }
 
+resource "aws_route53_record" "rest" {
+  count = var.rest-count
+  zone_id = var.hosted-zone-id
+  name = "rest-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.rest.*.private_ip, count.index)}"]
+}
+
 resource "aws_instance" "ksql" {
   count         = var.ksql-count
   ami           = var.aws-ami-id
@@ -327,6 +384,15 @@ resource "aws_instance" "ksql" {
   subnet_id = var.subnet-id
   vpc_security_group_ids = var.vpc-security-group-ids
   associate_public_ip_address = true
+}
+
+resource "aws_route53_record" "ksql" {
+  count = var.ksql-count
+  zone_id = var.hosted-zone-id
+  name = "ksql-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
 }
 
 // Output
