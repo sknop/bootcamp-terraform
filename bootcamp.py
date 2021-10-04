@@ -4,8 +4,9 @@ import pexpect
 import zipfile
 import subprocess
 import sys
+import shutil
 import configparser
-from pathlib import Path
+from pathlib import Path, PurePath
 import json
 import logging
 
@@ -17,7 +18,6 @@ import logging
 
 KERBEROS_DIRECTORY = "kerberos"
 SSL_DIRECTORY = "ssl"
-
 
 class Generator:
     def __init__(self, base_dir, config_file, host_entries, owner_name):
@@ -57,6 +57,7 @@ class Generator:
         self.set_config('realm', parser)
         self.set_config('service_password', parser)
         self.set_config('base_dn', parser)
+        self.set_config('truststore_file', parser)
 
     def init_logging(self):
         self.logger.setLevel(logging.INFO)  # change to INFO or DEBUG for more output
@@ -104,6 +105,10 @@ class Generator:
 
                 filename = self.create_certificate(self.directories[1], principal, host)
                 files.append(filename)
+
+        filename = self.copy_truststore(self.directories[1], self.truststore_file)
+        if filename:
+            files.append(filename)
 
         self.archive_and_delete_files(files)
 
@@ -195,6 +200,23 @@ class Generator:
 
         return filename
 
+    def copy_truststore(self, target_dir, truststore_filename):
+        # check file exists in source
+        # if exists
+        #   take basename
+        #   create targetname
+        #   copy source to target
+        # return targetname
+        target_name = None
+        source_path = Path(truststore_filename)
+        if source_path.is_file():
+            basename = PurePath(source_path.absolute()).name
+            target_path = PurePath(target_dir, basename)
+            shutil.copyfile(source_path.absolute(), target_path)
+            target_name = target_path.as_posix()
+        
+        return target_name
+
     def disconnect_ldap(self):
         self.ldap.unbind()
 
@@ -206,8 +228,11 @@ class Generator:
             os.makedirs(p, exist_ok=True)
 
     def destroy_directories(self):
-        for p in self.directories:
-            os.removedirs(p)
+        try:
+            for p in self.directories:
+                os.removedirs(p)
+        except OSError as err:
+            self.logger.error(f"Destroy Directory raised {err}")
 
         os.chdir(self.cwd)
 
