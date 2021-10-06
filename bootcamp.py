@@ -28,11 +28,12 @@ class Generator:
         self.owner = owner_name
         self.directories = [KERBEROS_DIRECTORY, SSL_DIRECTORY]
         self.zip_file_name = f"{self.owner}.zip"
-        # self.cwd = os.getcwd()
 
         self.init_logging()
         self.initialise()
         self.ldap = self.connect_ldap()
+
+        self.logger.info(f"Current Directory: {os.getcwd()}")
 
         self.ensure_directories()
 
