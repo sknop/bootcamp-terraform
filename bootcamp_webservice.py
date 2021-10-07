@@ -1,7 +1,8 @@
 #!/usrbin/env python3
 import logging
 
-from flask import Flask, request, send_file
+from flask import Flask, request, json, send_file, render_template
+from werkzeug.exceptions import HTTPException
 from bootcamp import Generator
 import json
 import sys
@@ -12,14 +13,26 @@ app = Flask(__name__)
 
 BOOTCAMP_CONFIG_FILENAME_CONFIG = 'BOOTCAMP_CONFIG_FILENAME'
 CONFIG_FILE = "config-file"
+CLIENT_FILE = "clients.zip"
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # pass through HTTP errors
+    if isinstance(e, HTTPException):
+        return e
+
+    # now you're handling non-HTTP exceptions only
+    return render_template("500_generic.html", exception=e), 500
 
 @app.route('/generate', methods=['POST'])
 def invoke_generator():
+    logger = logging.getLogger('bootcamp')
     data_bytes = request.data
     hosts = json.loads(data_bytes)
 
     tmpdir = tempfile.TemporaryDirectory(prefix='bootcamp_')
+
+    logger.info(f"Created {tmpdir}")
 
     config_file = find_config_file()
 
@@ -27,10 +40,6 @@ def invoke_generator():
     filename = os.path.join(tmpdir.name, generator.zip_file_name)
 
     result = send_file(filename, attachment_filename=filename, mimetype='application/zip')
-
-    os.unlink(filename)
-
-    tmpdir.cleanup()
 
     return result
 
@@ -43,6 +52,12 @@ def verify_input():
 
     return data_bytes
 
+@app.route('/client/defaults', methods=['GET'])
+def get_default_clients():
+    client_filename = CLIENT_FILE
+    result = send_file(client_filename, attachment_filename=client_filename, mimetype='application/zip')
+
+    return result
 
 def find_config_file():
     if CONFIG_FILE in app.config:
