@@ -8,12 +8,19 @@ import json
 import sys
 import os
 import tempfile
+import traceback
 
 app = Flask(__name__)
 
 BOOTCAMP_CONFIG_FILENAME_CONFIG = 'BOOTCAMP_CONFIG_FILENAME'
 CONFIG_FILE = "config-file"
 CLIENT_FILE = "clients.zip"
+
+def format_stacktrace():
+    parts = ["Traceback (most recent call last):\n"]
+    parts.extend(traceback.format_stack(limit=25)[:-2])
+    parts.extend(traceback.format_exception(*sys.exc_info())[1:])
+    return "".join(parts)
 
 @app.errorhandler(Exception)
 def handle_exception(e):
@@ -22,7 +29,7 @@ def handle_exception(e):
         return e
 
     # now you're handling non-HTTP exceptions only
-    return render_template("500_generic.html", exception=e), 500
+    return render_template("500_generic.html", exception=format_stacktrace()), 500
 
 @app.route('/generate', methods=['POST'])
 def invoke_generator():
