@@ -23,12 +23,14 @@ def format_stacktrace():
     return "".join(parts)
 
 @app.errorhandler(Exception)
-def handle_exception(e):
+def handle_exception(error):
     # pass through HTTP errors
-    if isinstance(e, HTTPException):
-        return e
+    if isinstance(error, HTTPException):
+        return error
 
     # now you're handling non-HTTP exceptions only
+    logger = logging.getLogger('bootcamp')
+    logger.exception(error)
     return render_template("500_generic.html", exception=format_stacktrace()), 500
 
 @app.route('/generate', methods=['POST'])
