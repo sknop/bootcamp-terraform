@@ -33,7 +33,7 @@ class Generator:
         self.initialise()
         self.ldap = self.connect_ldap()
 
-        self.logger.info(f"Current Directory: {os.getcwd()}")
+        # self.logger.info(f"Current Directory: {os.getcwd()}")
 
         self.ensure_directories()
 
