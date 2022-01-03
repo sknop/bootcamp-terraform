@@ -433,6 +433,92 @@ resource "aws_route53_record" "elastic" {
   records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
 }
 
+// RDS resources (shared managed database services)
+
+resource "aws_db_parameter_group" "default" {
+  name   = "rds-cdc-mysql57"
+  family = "mysql5.7"
+
+  parameter {
+    name  = "binlog_format"
+    value = "ROW"
+  }
+}
+
+resource "aws_db_instance" "default" {
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t3.xlarge"
+  name                 = "mydb"
+  username             = var.root_username
+  password             = var.root_password
+  parameter_group_name = aws_db_parameter_group.default.name # "default.mysql5.7"
+  skip_final_snapshot  = true
+  identifier           = "${var.owner-name}-bootcamp-shared-mysql"
+
+  allocated_storage     = 50
+  max_allocated_storage = 100
+
+  publicly_accessible = true
+  backup_retention_period = 35
+
+  port = 3306
+  storage_type = "gp2"
+
+  tags = {
+    Name = "${var.owner-name}-mysql-bootcamp-managed-instance"
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
+    purpose = var.purpose
+    sshUser = var.linux-user
+    region = var.region
+    role_region = "schema-${var.region}"
+    description = "MySQL db  - Managed by Terraform"
+
+  }
+
+  multi_az               = false
+  vpc_security_group_ids = [var.vpc-security-group-ids]
+  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
+}
+
+resource "aws_db_instance" "oracle" {
+  engine               = "oracle-ee"
+  engine_version       = "12.1.0.2.v25"
+  instance_class       = "db.t3.large"
+  name                 = "MYORACLE"
+  username             = var.root_username
+  password             = var.root_password
+  #parameter_group_name = "default.oracle-ee-18"
+  skip_final_snapshot  = true
+  identifier           = "${var.var.owner-name}-oracle-bootcamp-managed-instance"
+
+  allocated_storage     = 50
+  max_allocated_storage = 100
+  backup_retention_period = 35
+
+  publicly_accessible = true
+
+  port = 1521
+  storage_type = "gp2"
+  tags = {
+    Name = "${var.owner-name}-oracle-bootcamp-managed-instance"
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
+    purpose = var.purpose
+    sshUser = var.linux-user
+    region = var.region
+    role_region = "schema-${var.region}"
+    description = "Oracle db  - Managed by Terraform"
+
+  }
+  multi_az               = false
+  vpc_security_group_ids = [var.vpc-security-group-ids]
+}
+
+locals {
+  db_instance_address  = element(concat(aws_db_instance.default.*.endpoint, aws_db_instance.default.*.endpoint, [""]), 0)
+}
 
 // Output
 
@@ -464,6 +550,10 @@ output "ksql_private_dns" {
   value = [aws_instance.ksql.*.private_dns]
 }
 
+output "db_instance_address" {
+  description = "The address of the RDS instance"
+  value       = local.db_instance_address
+}
 
 # cluster data
 output "cluster_data" {
