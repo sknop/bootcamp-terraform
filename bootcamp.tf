@@ -395,6 +395,45 @@ resource "aws_route53_record" "ksql" {
   records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
 }
 
+
+resource "aws_instance" "elastic" {
+  count         = var.elastic-count
+  ami           = var.aws-ami-id
+  instance_type = var.elastic-instance-type
+  availability_zone = var.availability-zone
+  key_name = var.key-name
+
+  root_block_device {
+    volume_size = 1000 # 1TB
+  }
+
+  tags = {
+    Name = "${var.owner-name}-elastic-${count.index}-${var.availability-zone}"
+    description = "Elasticsearch nodes - Managed by Terraform"
+    role = "schema"
+    Owner_Name = var.owner-name
+    Owner_Email = var.owner-email
+    purpose = var.purpose
+    sshUser = var.linux-user
+    region = var.region
+    role_region = "schema-${var.region}"
+  }
+
+  subnet_id = var.subnet-id
+  vpc_security_group_ids = var.vpc-security-group-ids
+  associate_public_ip_address = true
+}
+
+resource "aws_route53_record" "elastic" {
+  count = var.elastic-count
+  zone_id = var.hosted-zone-id
+  name = "elastic-${count.index}.${var.owner-name}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
+}
+
+
 // Output
 
 output "zookeeper_private_dns" {

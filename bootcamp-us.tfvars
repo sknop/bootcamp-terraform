@@ -23,6 +23,7 @@ schema-count = 2
 rest-count = 1
 ksql-count = 2
 c3-count = 1
+elastic-count = 3
 
 zk-instance-type = "t3a.large"
 broker-instance-type = "t3a.large"
@@ -32,3 +33,4 @@ rest-instance-type = "t3.medium"
 c3-instance-type = "t3a.large"
 ksql-instance-type = "t3a.large"
 client-instance-type = "t3.medium"
+elastic-instance-type = "t3a.2xlarge"

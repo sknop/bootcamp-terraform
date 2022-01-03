@@ -16,6 +16,7 @@ schema-count = 2
 rest-count = 1
 ksql-count = 2
 c3-count = 1
+elastic-count = 3
 
 vpc-security-group-ids = ["sg-055c8c07419910751"]
 vpc-id = "vpc-08da1069e2646f90f"
@@ -29,4 +30,4 @@ rest-instance-type = "t3.medium"
 c3-instance-type = "t3a.large"
 ksql-instance-type = "t3a.large"
 client-instance-type = "t3.medium"
-
+elastic-instance-type = "t3a.2xlarge"
