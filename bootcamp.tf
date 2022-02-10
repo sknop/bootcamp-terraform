@@ -148,6 +148,7 @@ resource "aws_instance" "zookeepers" {
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
     purpose = var.purpose
+    Schedule = "zookeeper-mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
     role_region = "zookeepers-${var.region}"
@@ -192,6 +193,7 @@ resource "aws_instance" "brokers" {
     sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
+    Schedule = "kafka-mon-8am-fri-6pm"
     # ansible_python_interpreter = "/usr/bin/python3"
     #EntScheduler = "mon,tue,wed,thu,fri;1600;mon,tue,wed,thu;fri;sat;0400;"
     region = var.region
@@ -224,6 +226,7 @@ resource "aws_instance" "connect-cluster" {
     role = "connect"
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
+    Schedule = "mon-8am-fri-6pm"
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -260,6 +263,7 @@ resource "aws_instance" "schema" {
     role = "schema"
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
+    Schedule = "mon-8am-fri-6pm"
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -302,6 +306,7 @@ resource "aws_instance" "control-center" {
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
     purpose = var.purpose
+    Schedule = "mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -338,6 +343,7 @@ resource "aws_instance" "rest" {
     role = "schema"
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
+    Schedule = "mon-8am-fri-6pm"
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
@@ -375,6 +381,7 @@ resource "aws_instance" "ksql" {
     role = "schema"
     Owner_Name = var.owner-name
     Owner_Email = var.owner-email
+    Schedule = "mon-8am-fri-6pm"
     purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
