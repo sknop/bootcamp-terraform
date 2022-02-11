@@ -8,10 +8,7 @@ aws-profile = "default"
 # Do not touch these
 region = "eu-west-1"
 availability-zone = "eu-west-1a"
-# aws-ami-id = "ami-0865a4c652f3cd82b"
-# Ubuntu 20.04, Java 11, CP 6.1.1
-aws-ami-id = "ami-0559330dd60001b36"
-# aws-ami-id = "ami-0cb5710bf2336192d"
+aws-ami-id = "ami-0786ee9a811fa27d9"
 
 zk-count = 3
 broker-count = 4
