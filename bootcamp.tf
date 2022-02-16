@@ -16,7 +16,7 @@ variable "owner-name" {
 }
 
 variable "owner-email" {
- default = "sven@confluent.io"
+  default = "sven@confluent.io"
 }
 
 variable "purpose" {
@@ -95,11 +95,11 @@ variable "hosted-zone-id" {
 // Provider
 
 provider "aws" {
-  profile    = var.aws-profile
-  region     = var.region
+  profile = var.aws-profile
+  region  = var.region
 }
 
-variable "aws-ami-id"  {
+variable "aws-ami-id" {
   default = "ami-0cb5710bf2336192d"
 }
 
@@ -130,48 +130,49 @@ variable "vpc-security-group-ids" {
 // Resources
 
 resource "aws_instance" "zookeepers" {
-  count         = var.zk-count
-  ami           = var.aws-ami-id
-  instance_type = var.zk-instance-type
+  count             = var.zk-count
+  ami               = var.aws-ami-id
+  instance_type     = var.zk-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
 
   root_block_device {
     volume_size = 50
   }
 
   tags = {
-    Name = "${var.owner-name}-zookeeper-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-zookeeper-${count.index}-${var.availability-zone}"
     description = "zookeeper nodes - Managed by Terraform"
-    role = "zookeeper"
+    role        = "zookeeper"
     zookeeperid = count.index
-    Owner_Name = var.owner-name
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    purpose = var.purpose
-    Schedule = "zookeeper-mon-8am-fri-6pm"
-    sshUser = var.linux-user
-    region = var.region
+    purpose     = var.purpose
+    Schedule    = "zookeeper-mon-8am-fri-6pm"
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "zookeepers-${var.region}"
+    started-by  = "schedule"
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "zookeepers" {
-  count = var.zk-count
+  count   = var.zk-count
   zone_id = var.hosted-zone-id
-  name = "zookeeper-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "zookeeper-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.zookeepers.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "brokers" {
-  count         = var.broker-count
-  ami           = var.aws-ami-id
-  instance_type = var.broker-instance-type
+  count             = var.broker-count
+  ami               = var.aws-ami-id
+  instance_type     = var.broker-instance-type
   availability_zone = var.availability-zone
   # security_groups = ["${var.security_group}"]
   key_name = var.key-name
@@ -181,224 +182,230 @@ resource "aws_instance" "brokers" {
   }
 
   tags = {
-    Name = "${var.owner-name}-broker-${count.index}-${var.availability-zone}"
-    description = "broker nodes - Managed by Terraform"
-    nice-name = "kafka-${count.index}"
+    Name          = "${var.owner-name}-broker-${count.index}-${var.availability-zone}"
+    description   = "broker nodes - Managed by Terraform"
+    nice-name     = "kafka-${count.index}"
     big-nice-name = "follower-kafka-${count.index}"
-    brokerid = count.index
-    role = "broker"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
-    purpose = var.purpose
-    sshUser = var.linux-user
+    brokerid      = count.index
+    role          = "broker"
+    Owner_Name    = var.owner-name
+    Owner_Email   = var.owner-email
+    purpose       = var.purpose
+    sshUser       = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
-    Schedule = "kafka-mon-8am-fri-6pm"
+    Schedule  = "kafka-mon-8am-fri-6pm"
     # ansible_python_interpreter = "/usr/bin/python3"
     #EntScheduler = "mon,tue,wed,thu,fri;1600;mon,tue,wed,thu;fri;sat;0400;"
-    region = var.region
+    region      = var.region
     role_region = "brokers-${var.region}"
+    started-by  = "schedule"
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "brokers" {
-  count = var.broker-count
+  count   = var.broker-count
   zone_id = var.hosted-zone-id
-  name = "kafka-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "kafka-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.brokers.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "connect-cluster" {
-  count         = var.connect-count
-  ami           = var.aws-ami-id
-  instance_type = var.connect-instance-type
+  count             = var.connect-count
+  ami               = var.aws-ami-id
+  instance_type     = var.connect-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
   tags = {
-    Name = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
     description = "Connect nodes - Managed by Terraform"
-    role = "connect"
-    Owner_Name = var.owner-name
+    role        = "connect"
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
-    sshUser = var.linux-user
-    region = var.region
+    Schedule    = "mon-8am-fri-6pm"
+    purpose     = var.purpose
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "connect-${var.region}"
+    started-by  = "schedule"
   }
 
   root_block_device {
     volume_size = 100 # 1TB
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "connect-cluster" {
-  count = var.connect-count
+  count   = var.connect-count
   zone_id = var.hosted-zone-id
-  name = "connect-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "connect-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.connect-cluster.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "schema" {
-  count         = var.schema-count
-  ami           = var.aws-ami-id
-  instance_type = var.schema-instance-type
+  count             = var.schema-count
+  ami               = var.aws-ami-id
+  instance_type     = var.schema-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
   tags = {
-    Name = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
     description = "Schema nodes - Managed by Terraform"
-    role = "schema"
-    Owner_Name = var.owner-name
+    role        = "schema"
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
-    sshUser = var.linux-user
-    region = var.region
+    Schedule    = "mon-8am-fri-6pm"
+    purpose     = var.purpose
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "schema-${var.region}"
+    started-by  = "schedule"
   }
 
   root_block_device {
     volume_size = 100 # 1TB
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "schema" {
-  count = var.schema-count
+  count   = var.schema-count
   zone_id = var.hosted-zone-id
-  name = "schema-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "schema-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.schema.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "control-center" {
-  count         = var.c3-count
-  ami           = var.aws-ami-id
-  instance_type = var.c3-instance-type
+  count             = var.c3-count
+  ami               = var.aws-ami-id
+  instance_type     = var.c3-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
 
   root_block_device {
     volume_size = 1000 # 1TB
   }
 
   tags = {
-    Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
-    role = "schema"
-    Owner_Name = var.owner-name
+    role        = "schema"
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    purpose = var.purpose
-    Schedule = "mon-8am-fri-6pm"
-    sshUser = var.linux-user
-    region = var.region
+    purpose     = var.purpose
+    Schedule    = "mon-8am-fri-6pm"
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "schema-${var.region}"
+    started-by  = "schedule"
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "control-center" {
-  count = var.c3-count
+  count   = var.c3-count
   zone_id = var.hosted-zone-id
-  name = "controlcenter-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "controlcenter-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.control-center.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "rest" {
-  count         = var.rest-count
-  ami           = var.aws-ami-id
-  instance_type = var.rest-instance-type
+  count             = var.rest-count
+  ami               = var.aws-ami-id
+  instance_type     = var.rest-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
 
   root_block_device {
     volume_size = 100 # 1TB
   }
 
   tags = {
-    Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
-    role = "schema"
-    Owner_Name = var.owner-name
+    role        = "schema"
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
-    sshUser = var.linux-user
-    region = var.region
+    Schedule    = "mon-8am-fri-6pm"
+    purpose     = var.purpose
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "schema-${var.region}"
+    started-by  = "schedule"
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "rest" {
-  count = var.rest-count
+  count   = var.rest-count
   zone_id = var.hosted-zone-id
-  name = "rest-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "rest-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.rest.*.private_ip, count.index)}"]
 }
 
 resource "aws_instance" "ksql" {
-  count         = var.ksql-count
-  ami           = var.aws-ami-id
-  instance_type = var.ksql-instance-type
+  count             = var.ksql-count
+  ami               = var.aws-ami-id
+  instance_type     = var.ksql-instance-type
   availability_zone = var.availability-zone
-  key_name = var.key-name
+  key_name          = var.key-name
 
   root_block_device {
     volume_size = 1000 # 1TB
   }
 
   tags = {
-    Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
+    Name        = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
-    role = "schema"
-    Owner_Name = var.owner-name
+    role        = "schema"
+    Owner_Name  = var.owner-name
     Owner_Email = var.owner-email
-    Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
-    sshUser = var.linux-user
-    region = var.region
+    Schedule    = "mon-8am-fri-6pm"
+    purpose     = var.purpose
+    sshUser     = var.linux-user
+    region      = var.region
     role_region = "schema-${var.region}"
+    started-by  = "schedule"
   }
 
-  subnet_id = var.subnet-id
-  vpc_security_group_ids = var.vpc-security-group-ids
+  subnet_id                   = var.subnet-id
+  vpc_security_group_ids      = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
 
 resource "aws_route53_record" "ksql" {
-  count = var.ksql-count
+  count   = var.ksql-count
   zone_id = var.hosted-zone-id
-  name = "ksql-${count.index}.${var.owner-name}"
-  type = "A"
-  ttl = "300"
+  name    = "ksql-${count.index}.${var.owner-name}"
+  type    = "A"
+  ttl     = "300"
   records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
 }
 
@@ -437,6 +444,6 @@ output "ksql_private_dns" {
 output "cluster_data" {
   value = {
     "ssh_username" = var.linux-user
-    "ssh_key" = var.key-name
+    "ssh_key"      = var.key-name
   }
 }
