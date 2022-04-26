@@ -1,0 +1,7 @@
+dn: ou=Users,ou=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Services,ou=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
+objectClass: organizationalUnit
+ou: Services
