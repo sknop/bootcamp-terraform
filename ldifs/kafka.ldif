@@ -1,0 +1,3 @@
+dn: ou=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
+objectClass: organizationalUnit
+ou: Kafka
