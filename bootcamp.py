@@ -19,6 +19,7 @@ import logging
 KERBEROS_DIRECTORY = "kerberos"
 SSL_DIRECTORY = "ssl"
 
+
 class Generator:
     def __init__(self, base_dir, config_file, host_entries, owner_name):
         self.logger = logging.getLogger('bootcamp')
