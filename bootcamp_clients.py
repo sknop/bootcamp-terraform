@@ -20,9 +20,9 @@ KERBEROS_DIRECTORY = "kerberos"
 SSL_DIRECTORY = "ssl"
 
 
-class Generator:
+class ClientGenerator:
     def __init__(self, base_dir, config_file, host_entries, owner_name):
-        self.logger = logging.getLogger('bootcamp')
+        self.logger = logging.getLogger('bootcamp_client')
         self.base_dir = base_dir
         self.config_file = config_file
         self.hosts = host_entries
@@ -43,7 +43,7 @@ class Generator:
         self.disconnect_ldap()
 
         self.destroy_directories()
-        
+
     def initialise(self):
         parser = configparser.ConfigParser()
         with open(self.config_file) as f:
@@ -57,9 +57,7 @@ class Generator:
         self.set_config('username', parser)
         self.set_config('password', parser)
         self.set_config('realm', parser)
-        self.set_config('service_password', parser)
         self.set_config('base_dn', parser)
-        self.set_config('truststore_file', parser)
 
     def init_logging(self):
         self.logger.setLevel(logging.INFO)  # change to INFO or DEBUG for more output
@@ -177,20 +175,20 @@ class Generator:
 
         self.logger.info(f"Creating certificate with {pem_filename} {p12_filename} {filename}")
 
-        command = f"vault write -field certificate kafka-int-ca/issue/kafka-server "\
+        command = f"vault write -field certificate kafka-int-ca/issue/kafka-server " \
                   f"common_name=kafka.servers.kafka.bootcamp.confluent.io alt_names={host} format=pem_bundle".split()
         with open(pem_filename, 'w') as f:
             process = subprocess.Popen(command, stdout=f, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             self.logger.info(stderr.decode('utf-8'))
 
-        command = f"openssl pkcs12 -inkey {pem_filename} -in {pem_filename} "\
+        command = f"openssl pkcs12 -inkey {pem_filename} -in {pem_filename} " \
                   f"-name {host} -export -out {p12_filename} -password pass:changeme".split()
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         self.logger.info(stderr.decode('utf-8'))
 
-        command = f"keytool -importkeystore -srcstorepass changeme -deststorepass changeme -destkeystore "\
+        command = f"keytool -importkeystore -srcstorepass changeme -deststorepass changeme -destkeystore " \
                   f"{filename} -srckeystore {p12_filename} -srcstoretype PKCS12".split()
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
@@ -216,7 +214,7 @@ class Generator:
             target_path = PurePath(target_dir, basename)
             shutil.copyfile(source_path.absolute(), target_path)
             target_name = target_path.as_posix()
-        
+
         return target_name
 
     def disconnect_ldap(self):
@@ -239,7 +237,7 @@ class Generator:
         # os.chdir(self.cwd)
 
 
-def load_host_file(filename):
+def load_users_file(filename):
     with open(filename) as f:
         content = f.read()
 
@@ -248,14 +246,14 @@ def load_host_file(filename):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print("Usage: " + sys.argv[0] + " <config-file> <host-file> <owner>", file=sys.stderr)
+        print("Usage: " + sys.argv[0] + " <config-file> <user-file> <owner>", file=sys.stderr)
         sys.exit(1)
 
     config = sys.argv[1]
-    host_file = sys.argv[2]
+    user_file = sys.argv[2]
     owner = sys.argv[3]
 
-    hosts = load_host_file(host_file)
+    users = load_users_file(user_file)
 
-    generator = Generator('.', config, hosts, owner)
+    generator = ClientGenerator('.', config, users, owner)
     print(f"Created {generator.zip_file_name}")
