@@ -1,0 +1,10 @@
+{
+    "alice" : [ "Alice LookingGlass", "alice-secret" ],
+    "barnie" : [ "Barnie Rubble", "bart-secret" ],
+    "charlie" : [ "Charlie Sheen", "charlie-secret" ],
+    "donald" : [ "Donald Duck", "donald-secret" ],
+    "eva" : [ "Eva Maria", "eva-secret" ],
+    "fritz" : [ "Fritz Walter", "fritz-secret" ],
+    "greta" : [ "Greta Thunberg", "greta-secret" ],
+    "hans" : [ "Hans Zimmer", "hans-secret"]
+}
