@@ -95,36 +95,32 @@ class ClientGenerator:
     def process_host_file(self):
         files = []
 
-        for principal, hosts in self.hosts.items():
-            for host in hosts:
-                print(f"{principal} --> {host}")
-                (service_name, filename) = self.create_service_user(self.directories[0], principal, host)
+        for principal, details in self.hosts.items():
+            cn = details[0]
+            password = details[1]
 
-                self.create_keytab(service_name, filename)
-                files.append(filename)
+            print(f"{principal} --> {cn} {password}")
+            (user_name, filename) = self.create_user(self.directories[0], principal, cn, password)
 
-                filename = self.create_certificate(self.directories[1], principal, host)
-                files.append(filename)
-
-        filename = self.copy_truststore(self.directories[1], self.truststore_file)
-        if filename:
+            self.create_keytab(user_name, password, filename)
             files.append(filename)
+
+            # filename = self.create_certificate(self.directories[1], principal)
+            # files.append(filename)
 
         self.archive_and_delete_files(files)
 
-    def create_service_user(self, basedir, principal, host):
-        short_host = host.split('.')[0]
-        cn = f"{principal} {short_host}"
+    def create_user(self, basedir, principal, cn, password):
         dn = f"CN={cn},{self.base_dn}"
-        service_name = f"{principal}/{host}"
-        user_principal_name = f"{service_name}@{self.realm}"
+        user_principal_name = f"{principal}@{self.realm}"
+        sAMAccountName = principal
 
         user_attrs = {
             'objectClass': ['top', 'person', 'organizationalPerson', 'user'],
             'cn': cn,
             'accountExpires': '0',
             'userPrincipalName': user_principal_name,
-            'servicePrincipalName': service_name
+            'sAMAccountName': sAMAccountName
         }
 
         self.logger.info(user_attrs)
@@ -134,7 +130,7 @@ class ClientGenerator:
 
         # set the password
 
-        self.ldap.extend.microsoft.modify_password(dn, self.service_password)
+        self.ldap.extend.microsoft.modify_password(dn, password)
         self.logger.info(self.ldap.result)
 
         # set the account active and password non-expiring
@@ -142,24 +138,24 @@ class ClientGenerator:
         self.ldap.modify(dn, {"userAccountControl": [('MODIFY_REPLACE', 66048)]})
         self.logger.info(self.ldap.result)
 
-        filename = os.path.join(basedir, f"{principal}-{short_host}.keytab")
+        filename = os.path.join(basedir, f"{principal}.keytab")
 
-        return service_name, filename
+        return user_principal_name, filename
 
-    def create_keytab(self, service_name, filename):
+    def create_keytab(self, principal, password, filename):
         # expects ktutil to be installed in the path
-        encryptions = ["aes256-cts", "aes128-cts", "rc4-hmac"]
+        encryptions = ["aes256-cts", "aes128-cts"]
 
         prompt = "ktutil:  "
 
         child = pexpect.spawn("ktutil")
 
         for encryption in encryptions:
-            cmd = f"addent -password -p {service_name} -k 1 -e {encryption}"
+            cmd = f"addent -password -p {principal} -k 1 -e {encryption}"
             child.expect(prompt)
             child.sendline(cmd)
             child.expect("Password for .*:")
-            child.sendline(self.service_password)
+            child.sendline(password)
 
         child.expect(prompt)
         child.sendline(f"write_kt {filename}")
@@ -167,23 +163,23 @@ class ClientGenerator:
         child.expect(prompt)
         child.sendline("q")
 
-    def create_certificate(self, basedir, principal, host):
+    def create_certificate(self, basedir, principal):
         # expect vault, openssl and keytool to be installed in the path
-        filename = os.path.join(basedir, f"{host}-keystore.jks")
-        pem_filename = os.path.join(basedir, f"{host}.pem")
-        p12_filename = os.path.join(basedir, f"{host}.p12")
+        filename = os.path.join(basedir, f"{principal}-keystore.jks")
+        pem_filename = os.path.join(basedir, f"{principal}.pem")
+        p12_filename = os.path.join(basedir, f"{principal}.p12")
 
         self.logger.info(f"Creating certificate with {pem_filename} {p12_filename} {filename}")
 
-        command = f"vault write -field certificate kafka-int-ca/issue/kafka-server " \
-                  f"common_name=kafka.servers.kafka.bootcamp.confluent.io alt_names={host} format=pem_bundle".split()
+        command = f"vault write -field certificate kafka-int-ca/issue/kafka-client " \
+                  f"common_name={principal}.clients.kafka.bootcamp.confluent.io format=pem_bundle".split()
         with open(pem_filename, 'w') as f:
             process = subprocess.Popen(command, stdout=f, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             self.logger.info(stderr.decode('utf-8'))
 
         command = f"openssl pkcs12 -inkey {pem_filename} -in {pem_filename} " \
-                  f"-name {host} -export -out {p12_filename} -password pass:changeme".split()
+                  f"-name {principal} -export -out {p12_filename} -password pass:changeme".split()
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         self.logger.info(stderr.decode('utf-8'))
