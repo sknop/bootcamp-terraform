@@ -6,5 +6,6 @@
     "eva" : [ "Eva Maria", "eva-secret" ],
     "fritz" : [ "Fritz Walter", "fritz-secret" ],
     "greta" : [ "Greta Thunberg", "greta-secret" ],
-    "hans" : [ "Hans Zimmer", "hans-secret"]
+    "hans" : [ "Hans Zimmer", "hans-secret"],
+    "mds" : [ "mds", "mds-secret"]
 }

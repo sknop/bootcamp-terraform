@@ -3,7 +3,6 @@ owner-email = "sven@confluent.io"
 owner-name = "sven"
 key-name = "sven-ireland-sa"
 purpose = "bootcamp-prep"
-aws-profile = "default"
 
 # Do not touch these
 region = "eu-west-1"

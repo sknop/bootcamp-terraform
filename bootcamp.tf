@@ -85,18 +85,21 @@ variable "client-instance-type" {
   default = "t3a.large"
 }
 
-variable "aws-profile" {
-  default = "default"
-}
-
 variable "hosted-zone-id" {
 }
 
 // Provider
 
 provider "aws" {
-  profile    = var.aws-profile
   region     = var.region
+
+  default_tags {
+    tags = {
+      Owner_Name = var.owner-name
+      Owner_Email = var.owner-email
+      purpose = var.purpose
+    }
+  }
 }
 
 variable "aws-ami-id"  {
@@ -145,9 +148,6 @@ resource "aws_instance" "zookeepers" {
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
     zookeeperid = count.index
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
-    purpose = var.purpose
     Schedule = "zookeeper-mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
@@ -187,9 +187,6 @@ resource "aws_instance" "brokers" {
     big-nice-name = "follower-kafka-${count.index}"
     brokerid = count.index
     role = "broker"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
-    purpose = var.purpose
     sshUser = var.linux-user
     # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
@@ -224,10 +221,7 @@ resource "aws_instance" "connect-cluster" {
     Name = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
     Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "connect-${var.region}"
@@ -261,10 +255,7 @@ resource "aws_instance" "schema" {
     Name = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
     Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -303,9 +294,6 @@ resource "aws_instance" "control-center" {
     Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
-    purpose = var.purpose
     Schedule = "mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
@@ -341,10 +329,7 @@ resource "aws_instance" "rest" {
     Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
     Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
@@ -379,10 +364,7 @@ resource "aws_instance" "ksql" {
     Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
-    Owner_Name = var.owner-name
-    Owner_Email = var.owner-email
     Schedule = "mon-8am-fri-6pm"
-    purpose = var.purpose
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"

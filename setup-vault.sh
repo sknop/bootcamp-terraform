@@ -20,7 +20,7 @@ vault write kafka-int-ca/config/urls issuing_certificates="$VAULT_ADDR/v1/kafka-
 
 # Create roles
 vault write kafka-int-ca/roles/kafka-client  enforce_hostnames=false allow_any_name=true  max_ttl=5040h # 30 days
-vault write kafka-int-ca/roles/kafka-server  nforce_hostnames=false allow_client=true allow_any_name=true allow_bare_domains=true allow_subdomains=true max_ttl=5040h # 30 days
+vault write kafka-int-ca/roles/kafka-server  enforce_hostnames=false allow_client=true allow_any_name=true allow_bare_domains=true allow_subdomains=true max_ttl=5040h # 30 days
 
 cat > kafka-client.hcl <<EOF
 path "kafka-int-ca/issue/kafka-client" {
