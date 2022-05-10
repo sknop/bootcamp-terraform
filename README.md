@@ -26,3 +26,27 @@ optional arguments:
 ```
 
 Sample usage: `python3 convert-to-host.py my.json my_keypair --template hosts-kerberos.j2`
+
+## stx_instances.py
+
+Starts and stops ec2 instances in a proper order. Uses information from a terraform state file. Expects AWS credentials in default profile or environment
+
+```
+usage: stx-instances.py [-h] [--wait-time WAIT_TIME] [--dry-run] [--no-dry-run] [--state-file STATE_FILE] operation
+
+Start or stop a set of EC2 instances in the appropriate order for a Kafka Cluster
+
+positional arguments:
+  operation             Start or stop instances
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --wait-time WAIT_TIME
+                        Duration to wait in seconds between sets of machines when starting/stopping
+  --dry-run             Perform a dry run. Default setting
+  --no-dry-run          Don't perform a dry run
+  --state-file STATE_FILE
+                        The location of your terraform state file in which the instances are described
+```
+
+Sample usage: `python3 stx-instances.py start --no-dry-run`
