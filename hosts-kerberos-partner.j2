@@ -1,0 +1,72 @@
+{# Copyright 2020 Confluent
+Contributors:
+   Sven Erik Knop sven@confluent.io
+   Christoph Schubert cschubert@confluent.io
+
+ All rights reserved -#}
+{# Template for  inventory file -#}
+{# Based on host_example.yml from https:/github.com/confluentinc/ -#}
+# Automatically created from terraform data on {{timestamp}}
+
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: {{ cluster_data.ssh_username}}
+    ansible_become: true
+    ansible_ssh_private_key_file: {{ cluster_data.ssh_key }}
+
+
+zookeeper:
+  hosts:
+    {% for host in zookeeper -%}
+    {{ host }}:
+        zookeeper_kerberos_keytab_path: /home/ubuntu/kerberos/zookeeper-{{host.split('.')[0]}}.keytab
+        zookeeper_kerberos_principal: zookeeper/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+kafka_broker:
+  hosts:
+    {% for host in kafka_broker -%}
+    {{ host }}:
+        kafka_broker_kerberos_keytab_path: /home/ubuntu/kerberos/kafka-{{host.split('.')[0]}}.keytab
+        kafka_broker_kerberos_principal: kafka/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+
+schema_registry:
+  hosts:
+    {% for host in schema_registry -%}
+    {{ host }}:
+        schema_registry_kerberos_keytab_path: /home/ubuntu/kerberos/schemaregistry-{{host.split('.')[0]}}.keytab
+        schema_registry_kerberos_principal: schemaregistry/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+
+kafka_rest:
+  hosts:
+    {% for host in kafka_rest -%}
+    {{ host }}:
+        kafka_rest_kerberos_keytab_path: /home/ubuntu/kerberos/rest-{{host.split('.')[0]}}.keytab
+        kafka_rest_kerberos_principal: rest/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+
+ksql:
+  hosts:
+    {% for host in ksql -%}
+    {{ host }}:
+        ksql_kerberos_keytab_path: /home/ubuntu/kerberos/ksql-{{host.split('.')[0]}}.keytab
+        ksql_kerberos_principal: ksql/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+
+kafka_connect:
+  hosts:
+    {% for host in kafka_connect -%}
+    {{ host }}:
+        kafka_connect_kerberos_keytab_path: /home/ubuntu/kerberos/connect-{{host.split('.')[0]}}.keytab
+        kafka_connect_kerberos_principal: connect/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
+
+control_center:
+  hosts:
+    {% for host in control_center -%}
+    {{ host }}:
+        control_center_kerberos_keytab_path: /home/ubuntu/kerberos/controlcenter-{{host.split('.')[0]}}.keytab
+        control_center_kerberos_principal: controlcenter/{{host}}@BOOTCAMP-PARTNERS.CONFLUENT.IO
+    {% endfor %}
