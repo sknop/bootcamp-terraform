@@ -7,7 +7,7 @@ purpose = "bootcamp-prep"
 # Do not touch these
 region = "eu-west-1"
 availability-zone = "eu-west-1a"
-aws-ami-id = "ami-0786ee9a811fa27d9"
+aws-ami-id = "ami-0d5c7dc1a2fd36a4b"
 
 zk-count = 3
 broker-count = 4
