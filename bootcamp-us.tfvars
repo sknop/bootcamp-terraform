@@ -12,7 +12,7 @@ region = "us-west-2"
 availability-zone = "us-west-2b"
 hosted-zone-id = "Z3JO7K0DOCUBEL"
 vpc-id = "vpc-047944e470c1d51db"
-subnet-id = "subnet-064343a3fbf437eac"
+subnet-id = []
 
 aws-ami-id = "ami-01d2e4357acf95f63" # Ubuntu 18.04 LTS CP 6.2.0 AMI; Use ami-02701bcdc5509e57b for Ubuntu 18.04 LTS base
 

@@ -19,7 +19,7 @@ c3-count = 1
 
 vpc-security-group-ids = ["sg-055c8c07419910751"]
 vpc-id = "vpc-08da1069e2646f90f"
-subnet-id = "subnet-08ee5dfa7dff69142"
+subnet-id = ["subnet-08ee5dfa7dff69142", "subnet-0d8f00c48032aabc6", "subnet-049c93e457808c85d"]
 
 zk-instance-type = "t3a.large"
 broker-instance-type = "r5.2xlarge"
