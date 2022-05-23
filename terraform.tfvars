@@ -1,7 +1,8 @@
 # Change these
 owner-email = "sven@confluent.io"
-owner-name = "sven"
-key-name = "sven-ireland-sa"
+owner-name = "Sven Erik Knop"
+dns-suffix = "sven"
+key-name = "bootcamp-partner-key"
 purpose = "bootcamp-prep"
 
 # Do not touch these

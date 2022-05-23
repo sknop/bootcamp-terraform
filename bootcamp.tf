@@ -47,7 +47,7 @@ resource "aws_instance" "zookeepers" {
 resource "aws_route53_record" "zookeepers" {
   count = var.zk-count
   zone_id = var.hosted-zone-id
-  name = "zookeeper-${count.index}.${var.owner-name}"
+  name = "zookeeper-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.zookeepers.*.private_ip, count.index)}"]
@@ -91,7 +91,7 @@ resource "aws_instance" "brokers" {
 resource "aws_route53_record" "brokers" {
   count = var.broker-count
   zone_id = var.hosted-zone-id
-  name = "kafka-${count.index}.${var.owner-name}"
+  name = "kafka-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.brokers.*.private_ip, count.index)}"]
@@ -125,7 +125,7 @@ resource "aws_instance" "connect-cluster" {
 resource "aws_route53_record" "connect-cluster" {
   count = var.connect-count
   zone_id = var.hosted-zone-id
-  name = "connect-${count.index}.${var.owner-name}"
+  name = "connect-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.connect-cluster.*.private_ip, count.index)}"]
@@ -159,7 +159,7 @@ resource "aws_instance" "schema" {
 resource "aws_route53_record" "schema" {
   count = var.schema-count
   zone_id = var.hosted-zone-id
-  name = "schema-${count.index}.${var.owner-name}"
+  name = "schema-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.schema.*.private_ip, count.index)}"]
@@ -194,7 +194,7 @@ resource "aws_instance" "control-center" {
 resource "aws_route53_record" "control-center" {
   count = var.c3-count
   zone_id = var.hosted-zone-id
-  name = "controlcenter-${count.index}.${var.owner-name}"
+  name = "controlcenter-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.control-center.*.private_ip, count.index)}"]
@@ -230,7 +230,7 @@ resource "aws_instance" "rest" {
 resource "aws_route53_record" "rest" {
   count = var.rest-count
   zone_id = var.hosted-zone-id
-  name = "rest-${count.index}.${var.owner-name}"
+  name = "rest-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.rest.*.private_ip, count.index)}"]
@@ -265,7 +265,7 @@ resource "aws_instance" "ksql" {
 resource "aws_route53_record" "ksql" {
   count = var.ksql-count
   zone_id = var.hosted-zone-id
-  name = "ksql-${count.index}.${var.owner-name}"
+  name = "ksql-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
   records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]

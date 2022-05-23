@@ -16,6 +16,11 @@ variable "owner-email" {
   default = "sven@confluent.io"
 }
 
+variable "dns-suffix" {
+  default = "sven"
+  description = "Suffix for DNS entry in Route 53. No spaces!"
+}
+
 variable "purpose" {
   default = "Bootcamp"
 }
