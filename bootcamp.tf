@@ -21,7 +21,6 @@ resource "aws_instance" "zookeepers" {
   count         = var.zk-count
   ami           = var.aws-ami-id
   instance_type = var.zk-instance-type
-  availability_zone = var.availability-zone
   key_name = var.key-name
 
   root_block_device {
@@ -29,7 +28,7 @@ resource "aws_instance" "zookeepers" {
   }
 
   tags = {
-    Name = "${var.owner-name}-zookeeper-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-zookeeper-${count.index}"
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
     zookeeperid = count.index
@@ -40,6 +39,7 @@ resource "aws_instance" "zookeepers" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   vpc_security_group_ids = var.vpc-security-group-ids
   associate_public_ip_address = true
 }
@@ -57,8 +57,9 @@ resource "aws_instance" "brokers" {
   count         = var.broker-count
   ami           = var.aws-ami-id
   instance_type = var.broker-instance-type
-  availability_zone = var.availability-zone
-  # security_groups = ["${var.security_group}"]
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+
+    # security_groups = ["${var.security_group}"]
   key_name = var.key-name
 
   root_block_device {
@@ -66,7 +67,7 @@ resource "aws_instance" "brokers" {
   }
 
   tags = {
-    Name = "${var.owner-name}-broker-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-broker-${count.index}"
     description = "broker nodes - Managed by Terraform"
     nice-name = "kafka-${count.index}"
     big-nice-name = "follower-kafka-${count.index}"
@@ -100,10 +101,10 @@ resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
   ami           = var.aws-ami-id
   instance_type = var.connect-instance-type
-  availability_zone = var.availability-zone
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
   tags = {
-    Name = "${var.owner-name}-connect-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-connect-${count.index}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
     Schedule = "mon-8am-fri-6pm"
@@ -134,10 +135,10 @@ resource "aws_instance" "schema" {
   count         = var.schema-count
   ami           = var.aws-ami-id
   instance_type = var.schema-instance-type
-  availability_zone = var.availability-zone
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
   tags = {
-    Name = "${var.owner-name}-schema-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-schema-${count.index}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -168,7 +169,7 @@ resource "aws_instance" "control-center" {
   count         = var.c3-count
   ami           = var.aws-ami-id
   instance_type = var.c3-instance-type
-  availability_zone = var.availability-zone
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
 
   root_block_device {
@@ -176,7 +177,7 @@ resource "aws_instance" "control-center" {
   }
 
   tags = {
-    Name = "${var.owner-name}-control-center-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-control-center-${count.index}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -203,7 +204,8 @@ resource "aws_instance" "rest" {
   count         = var.rest-count
   ami           = var.aws-ami-id
   instance_type = var.rest-instance-type
-  availability_zone = var.availability-zone
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+
   key_name = var.key-name
 
   root_block_device {
@@ -211,7 +213,7 @@ resource "aws_instance" "rest" {
   }
 
   tags = {
-    Name = "${var.owner-name}-rest-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-rest-${count.index}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -238,7 +240,7 @@ resource "aws_instance" "ksql" {
   count         = var.ksql-count
   ami           = var.aws-ami-id
   instance_type = var.ksql-instance-type
-  availability_zone = var.availability-zone
+  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
 
   root_block_device {
@@ -246,7 +248,7 @@ resource "aws_instance" "ksql" {
   }
 
   tags = {
-    Name = "${var.owner-name}-ksql-${count.index}-${var.availability-zone}"
+    Name = "${var.owner-name}-ksql-${count.index}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"

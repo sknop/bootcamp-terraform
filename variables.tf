@@ -5,7 +5,7 @@ variable "region" {
 }
 
 variable "availability-zone" {
-  default = "eu-west-1a"
+  type = list(string)
 }
 
 variable "owner-name" {
