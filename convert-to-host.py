@@ -7,26 +7,26 @@ from jinja2 import Template
 import pprint
 
 OUTPUT_KEYS = {
-    'kafka_broker': 'broker_private_dns',
-    'kafka_connect': 'connect_private_dns',
-    'schema_registry': 'schema_private_dns',
-    'control_center': 'control_center_private_dns',
-    'ksql': 'ksql_private_dns',
-    'kafka_rest': 'rest_private_dns',
-    'zookeeper': 'zookeeper_private_dns'
+    "kafka_broker": "broker_private_dns",
+    "kafka_connect": "connect_private_dns",
+    "schema_registry": "schema_private_dns",
+    "control_center": "control_center_private_dns",
+    "ksql": "ksql_private_dns",
+    "kafka_rest": "rest_private_dns",
+    "zookeeper": "zookeeper_private_dns",
 }
 
 KERBEROS_PRINCIPALS = {
-    'kafka_broker': 'kafka',
-    'kafka_connect': 'connect',
-    'schema_registry': 'schemaregistry',
-    'control_center': 'controlcenter',
-    'ksql': 'ksql',
-    'kafka_rest': 'rest',
-    'zookeeper': 'zookeeper'
+    "kafka_broker": "kafka",
+    "kafka_connect": "connect",
+    "schema_registry": "schemaregistry",
+    "control_center": "controlcenter",
+    "ksql": "ksql",
+    "kafka_rest": "rest",
+    "zookeeper": "zookeeper",
 }
 
-CLUSTER_DATA = 'cluster_data'
+CLUSTER_DATA = "cluster_data"
 
 
 def create_template(temp_file):
@@ -70,10 +70,10 @@ class TerraformResults:
 
         self.create_kerberos_dict()
 
-        self.ip_dict[CLUSTER_DATA] = self.json_output[CLUSTER_DATA]['value']
+        self.ip_dict[CLUSTER_DATA] = self.json_output[CLUSTER_DATA]["value"]
 
     def filter_item(self, name):
-        return self.json_output[name]['value']
+        return self.json_output[name]["value"]
 
     def output(self):
         self.print_hosts()
@@ -81,23 +81,27 @@ class TerraformResults:
         print(f"Generated JSON file for certificates: {self.username}.json")
 
     def print_ip(self):
-        with open(self.username + '.txt', 'w+') as f:
-            f.writelines('\n'.join(self.all_ips))
+        with open(self.username + ".txt", "w+") as f:
+            f.writelines("\n".join(self.all_ips))
             print(file=f)
 
     def print_json(self):
-        data = {KERBEROS_PRINCIPALS[x]: y for (x, y) in self.ip_dict.items() if x not in 'cluster_data'}
-        with open(self.username + '.json', 'w+') as f:
+        data = {
+            KERBEROS_PRINCIPALS[x]: y
+            for (x, y) in self.ip_dict.items()
+            if x not in "cluster_data"
+        }
+        with open(self.username + ".json", "w+") as f:
             json.dump(data, f, indent=4)
 
     def print_hosts(self):
-        host_filename = self.tempFile.replace('.j2', '.yml')
+        host_filename = self.tempFile.replace(".j2", ".yml")
         with open(host_filename, "w+") as f:
             print(self.template.render(self.ip_dict), file=f)
 
     def print_kerberos(self):
         print("Kerberos list:\n")
-        with open(self.username + '.csv', 'w+') as f:
+        with open(self.username + ".csv", "w+") as f:
             for key, ip_list in self.kerberos_dict.items():
                 for ip in ip_list:
                     print(f"{key},{ip}")
@@ -111,12 +115,16 @@ def parse_arguments():
 
     parser.add_argument("input", help="JSON input file to read")
     parser.add_argument("username", help="Name of the user for the output files")
-    parser.add_argument("--template", help="Inventory template (default = hosts.j2)", default="./hosts.j2")
+    parser.add_argument(
+        "--template",
+        help="Inventory template (default = hosts.j2)",
+        default="./hosts.j2",
+    )
 
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_arguments()
     results = TerraformResults(args.input, args.username, args.template)
     results.output()
