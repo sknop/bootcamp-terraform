@@ -1,0 +1,169 @@
+# Automatically created from terraform data on 
+
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: ubuntu
+    ansible_become: true
+    ansible_ssh_private_key_file: /home/ubuntu/.ssh/bootcamp.pem
+
+    regenerate_keystore_and_truststore: true
+    jmxexporter_enabled: true
+
+    ssl_enabled: true
+    ssl_provided_keystore_and_truststore: true
+    ssl_keystore_filepath: "/home/ubuntu/partners/ssl/{{inventory_hostname}}-keystore.jks"
+    ssl_keystore_key_password: changeme
+    ssl_keystore_store_password: changeme
+    ssl_truststore_filepath: "/home/ubuntu/partners/ssl/kafka-truststore.jks"
+    ssl_truststore_password: changeme
+    ssl_truststore_ca_cert_alias: root-ca
+
+    ssl_mutual_auth_enabled: true
+    zookeeper_quorum_authentication_type: mtls
+    zookeeper_client_authentication_type: kerberos
+
+    #
+    # Kerberos settings
+    #
+    kerberos_kafka_broker_primary: kafka
+    kerberos_configure: true
+    kerberos:
+      realm: bootcamp-partners.confluent.io
+      kdc_hostname: ip-172-32-0-193.eu-west-1.compute.internal
+      admin_hostname: ip-172-32-0-193.eu-west-1.compute.internal
+      canonicalize: false
+      # sasl_protocol: kerberos
+    zookeeper_sasl_protocol: kerberos
+
+    zookeeper_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/zookeeper-{{inventory_hostname_short}}.keytab"
+    zookeeper_kerberos_principal: "zookeeper/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    kafka_broker_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/kafka-{{inventory_hostname_short}}.keytab"
+    kafka_broker_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    schema_registry_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/schemaregistry-{{inventory_hostname_short}}.keytab"
+    schema_registry_kerberos_principal: "schemaregistry/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    kafka_rest_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/rest-{{inventory_hostname_short}}.keytab"
+    kafka_rest_kerberos_principal: "rest/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    kafka_connect_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/connect-{{inventory_hostname_short}}.keytab"
+    kafka_connect_kerberos_principal: "connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    ksql_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/ksql-{{inventory_hostname_short}}.keytab"
+    ksql_kerberos_principal: "ksql/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    control_center_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/controlcenter-{{inventory_hostname_short}}.keytab"
+    control_center_kerberos_principal: "controlcenter/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+
+    # RBAC settings
+    #
+    rbac_enabled: true
+    rbac_component_additional_system_admins: [ alice ]
+    mds_super_user: mds
+    mds_super_user_password: mds-secret
+    kafka_broker_ldap_user: kafka
+    kafka_broker_ldap_password: kafka-secret
+    schema_registry_ldap_user: schemaregistry
+    schema_registry_ldap_password: schema-secret
+    kafka_connect_ldap_user: connect
+    kafka_connect_ldap_password: connect-secret
+    ksql_ldap_user: ksql
+    ksql_ldap_password: ksql-secret
+    kafka_rest_ldap_user: rest
+    kafka_rest_ldap_password: rest-secret
+    control_center_ldap_user: controlcenter
+    control_center_ldap_password: c3-secret
+
+    kafka_broker_custom_listeners:
+        broker:
+            name: BROKER
+            port: 9091
+            ssl_enabled: true
+            ssl_mutual_auth_enabled: false
+            sasl_protocol: kerberos
+        internal:
+            name: INTERNAL
+            port: 9092
+            ssl_enabled: true
+            ssl_mutual_auth_enabled: false
+            sasl_protocol: oauth
+        client_listener:
+            name: CLIENT
+            port: 9093
+            ssl_enabled: true
+            ssl_mutual_auth_enabled: true
+        ldap_listener:
+            name: LDAP
+            port: 9094
+            ssl_enabled: true
+            ssl_mutual_auth_enabled: false
+            sasl_protocol: plain
+
+    kafka_broker_custom_properties:
+        ldap.java.naming.factory.initial: com.sun.jndi.ldap.LdapCtxFactory
+        ldap.com.sun.jndi.ldap.read.timeout: 3000
+        ldap.java.naming.provider.url: ldaps://samba.bootcamp-partners.confluent.io
+        ldap.java.naming.security.protocol: SSL
+        ldap.ssl.truststore.location: "{{kafka_broker_truststore_path}}"
+        ldap.ssl.truststore.password: "{{kafka_broker_truststore_storepass}}"
+
+        ldap.java.naming.security.principal: charlie@BOOTCAMP-PARTNERS.CONFLUENT.IO
+        ldap.java.naming.security.credentials: charlie-secret
+        ldap.java.naming.security.authentication: simple
+
+        ldap.user.search.base: OU=Users,OU=Kafka,DC=BOOTCAMP-PARTNERS,DC=CONFLUENT,DC=IO
+        ldap.search.mode: USERS
+        ldap.user.name.attribute: sAMAccountName
+        ldap.user.memberof.attribute: memberOf
+        ldap.user.memberof.attribute.pattern: CN=(.*),OU=Groups,OU=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
+        ldap.user.object.class: user
+
+        confluent.license: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDb25mbHVlbnRQcm9mZXNzaW9uYWxTZXJ2aWNlcyIsImV4cCI6MTcwNDQ5OTIwMCwiaWF0IjoxNjA5ODkxMjAwLCJpc3MiOiJDb25mbHVlbnQiLCJtb25pdG9yaW5nIjp0cnVlLCJuYjQiOjE2MDk5NDQ1MjYsInN1YiI6ImNvbnRyb2wtY2VudGVyIn0.JGa0Thb5zHXfMtZliIo6kCDFrNSCoVygUsYnPZ0Sg9q2nLb-Mo6G14Jd1oX57AYdQIV4V0RnXvKUxfVmNyfXLtTFnIk3rCaQlo_jPg7Hsg9ifOgtIPR4y1yIJs2DQtult_w4xoopAl4PhtoO13CAB9uVfTzcpOto2m4G4DVRMNFKobofVp3iJaDD1cuYeYOSf94chILCGEQ98wEJ-ktBgKtpuIwAisIjBW4F6oVm7chKhILpQ478zz4fkWaU-8xz4jnjVaGqLNmVEqJ5jf7ApMsNxCv5hWbo8_gkCucMg1fcUSzR5FkhkhFfh0o7DZweJJAiZ2Snr2cKNddCVRnLbQ
+
+        # Schema registry authentiction
+        confluent.basic.auth.credentials.source: USER_INFO
+        confluent.basic.auth.user.info: 'alice:alice-secret'
+    
+        # Special callback for ldap listener
+        listener.name.ldap.plain.sasl.server.callback.handler.class: io.confluent.security.auth.provider.ldap.LdapAuthenticateCallbackHandler
+        # From https://docs.confluent.io/platform/current/kafka/configure-mds/mutual-tls-auth-rbac.html#principal-mapping-rules-for-ssl-listeners-extract-a-principal-from-a-certificate
+        listener.name.client.ssl.principal.mapping.rules: |
+            RULE:^CN=([a-zA-Z0-9]*).*$/$1/L ,\
+            DEFAULT
+zookeeper:
+  hosts:
+    ip-172-32-1-218.eu-west-1.compute.internal:
+    ip-172-32-2-128.eu-west-1.compute.internal:
+    ip-172-32-3-254.eu-west-1.compute.internal:
+    
+kafka_broker:
+  hosts:
+    ip-172-32-1-120.eu-west-1.compute.internal:
+    ip-172-32-2-98.eu-west-1.compute.internal:
+    ip-172-32-3-85.eu-west-1.compute.internal:
+    ip-172-32-1-225.eu-west-1.compute.internal:
+    
+
+schema_registry:
+  hosts:
+    ip-172-32-1-83.eu-west-1.compute.internal:
+    ip-172-32-2-42.eu-west-1.compute.internal:
+    
+
+kafka_rest:
+  hosts:
+    ip-172-32-1-229.eu-west-1.compute.internal:
+    
+
+ksql:
+  hosts:
+    ip-172-32-1-198.eu-west-1.compute.internal:
+    ip-172-32-2-239.eu-west-1.compute.internal:
+    
+
+kafka_connect:
+  hosts:
+    ip-172-32-1-219.eu-west-1.compute.internal:
+    ip-172-32-2-95.eu-west-1.compute.internal:
+    
+
+control_center:
+  hosts:
+    ip-172-32-1-253.eu-west-1.compute.internal:
+    
