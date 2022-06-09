@@ -8,8 +8,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Owner_Name = var.owner-name
-      Owner_Email = var.owner-email
+      owner_name = var.owner-name
+      owner_email = var.owner-email
       purpose = var.purpose
     }
   }
