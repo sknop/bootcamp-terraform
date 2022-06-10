@@ -29,7 +29,7 @@ all:
     kerberos_kafka_broker_primary: kafka
     kerberos_configure: true
     kerberos:
-      realm: bootcamp-partners.confluent.io
+      realm: bootcamp.confluent.io
       kdc_hostname: ip-172-32-0-193.eu-west-1.compute.internal
       admin_hostname: ip-172-32-0-193.eu-west-1.compute.internal
       canonicalize: false
@@ -98,7 +98,7 @@ all:
     kafka_broker_custom_properties:
         ldap.java.naming.factory.initial: com.sun.jndi.ldap.LdapCtxFactory
         ldap.com.sun.jndi.ldap.read.timeout: 3000
-        ldap.java.naming.provider.url: ldaps://samba.bootcamp-partners.confluent.io
+        ldap.java.naming.provider.url: ldaps://samba.bootcamp.confluent.io
         ldap.java.naming.security.protocol: SSL
         ldap.ssl.truststore.location: "{{kafka_broker_truststore_path}}"
         ldap.ssl.truststore.password: "{{kafka_broker_truststore_storepass}}"
@@ -114,7 +114,7 @@ all:
         ldap.user.memberof.attribute.pattern: CN=(.*),OU=Groups,OU=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
         ldap.user.object.class: user
 
-        confluent.license: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDb25mbHVlbnRQcm9mZXNzaW9uYWxTZXJ2aWNlcyIsImV4cCI6MTcwNDQ5OTIwMCwiaWF0IjoxNjA5ODkxMjAwLCJpc3MiOiJDb25mbHVlbnQiLCJtb25pdG9yaW5nIjp0cnVlLCJuYjQiOjE2MDk5NDQ1MjYsInN1YiI6ImNvbnRyb2wtY2VudGVyIn0.JGa0Thb5zHXfMtZliIo6kCDFrNSCoVygUsYnPZ0Sg9q2nLb-Mo6G14Jd1oX57AYdQIV4V0RnXvKUxfVmNyfXLtTFnIk3rCaQlo_jPg7Hsg9ifOgtIPR4y1yIJs2DQtult_w4xoopAl4PhtoO13CAB9uVfTzcpOto2m4G4DVRMNFKobofVp3iJaDD1cuYeYOSf94chILCGEQ98wEJ-ktBgKtpuIwAisIjBW4F6oVm7chKhILpQ478zz4fkWaU-8xz4jnjVaGqLNmVEqJ5jf7ApMsNxCv5hWbo8_gkCucMg1fcUSzR5FkhkhFfh0o7DZweJJAiZ2Snr2cKNddCVRnLbQ
+        confluent.license: # your license file here
 
         # Schema registry authentiction
         confluent.basic.auth.credentials.source: USER_INFO
