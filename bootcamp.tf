@@ -63,7 +63,7 @@ resource "aws_instance" "brokers" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 1000 # 1TB
+    volume_size = 64 # 64 GB
   }
 
   tags = {
@@ -114,7 +114,7 @@ resource "aws_instance" "connect-cluster" {
   }
 
   root_block_device {
-    volume_size = 100 # 1TB
+    volume_size = 20 # 20 GB
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
@@ -148,8 +148,8 @@ resource "aws_instance" "schema" {
   }
 
   root_block_device {
-    volume_size = 100 # 1TB
-  }
+    volume_size = 20 # 20 GB
+ }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
   vpc_security_group_ids = var.vpc-security-group-ids
@@ -173,7 +173,7 @@ resource "aws_instance" "control-center" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 1000 # 1TB
+    volume_size = 64 # 64GB
   }
 
   tags = {
@@ -209,7 +209,7 @@ resource "aws_instance" "rest" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 100 # 1TB
+    volume_size = 20 # 20 GB
   }
 
   tags = {
@@ -244,7 +244,7 @@ resource "aws_instance" "ksql" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 1000 # 1TB
+    volume_size = 64 # 64 GB
   }
 
   tags = {

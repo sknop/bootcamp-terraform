@@ -2,3 +2,6 @@
 .terraform
 *.tfstate*
 /.terraform.lock.hcl
+*.json
+*.yml
+

@@ -114,6 +114,9 @@ all:
         ldap.user.memberof.attribute.pattern: CN=(.*),OU=Groups,OU=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
         ldap.user.object.class: user
 
+        # We always forget this
+        ldap.user.search.scope: 2
+
         confluent.license: # your license file here
 
         # Schema registry authentiction

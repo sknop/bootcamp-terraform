@@ -5,7 +5,7 @@ dns-suffix = "sven"
 key-name = "bootcamp-partner-key"
 purpose = "bootcamp-prep"
 
-# Do not touch these
+# Adjust these to your trainer's instructions
 region = "eu-west-1"
 aws-ami-id = "ami-0d5c7dc1a2fd36a4b"
 
@@ -13,7 +13,7 @@ zk-count = 3
 broker-count = 4
 connect-count = 2
 schema-count = 2
-rest-count = 1
+rest-count = 0
 ksql-count = 2
 c3-count = 1
 
