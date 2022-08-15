@@ -17,7 +17,7 @@ variable "owner-email" {
 }
 
 variable "dns-suffix" {
-  default = "sven"
+  default = "changeme"
   description = "Suffix for DNS entry in Route 53. No spaces!"
 }
 
