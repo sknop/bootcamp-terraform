@@ -99,7 +99,6 @@ class TerraformResults:
             for (x, y) in self.ip_dict.items()
             if x not in "cluster_data"
         }
-        print(data)
         with open(self.username + ".json", "w+") as f:
             json.dump(data, f, indent=4)
 
