@@ -1,9 +1,9 @@
 # Change these
 owner-email = "sven@confluent.io"
 owner-name = "Sven Erik Knop"
-dns-suffix = "sven"
-key-name = "bootcamp-partner-key"
-purpose = "bootcamp-prep"
+dns-suffix = "changeme"
+key-name = "bootcamp-key"
+purpose = "bootcamp-prep" 
 
 # Adjust these to your trainer's instructions
 region = "eu-west-1"
