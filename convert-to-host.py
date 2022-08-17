@@ -4,16 +4,15 @@ import argparse
 import json
 
 from jinja2 import Template
-import pprint
 
 OUTPUT_KEYS = {
-    "kafka_broker": "broker_private_dns",
-    "kafka_connect": "connect_private_dns",
-    "schema_registry": "schema_private_dns",
-    "control_center": "control_center_private_dns",
-    "ksql": "ksql_private_dns",
-    "kafka_rest": "rest_private_dns",
-    "zookeeper": "zookeeper_private_dns",
+    "kafka_broker": ["broker_private_dns", "broker_alternate_dns"],
+    "kafka_connect": ["connect_private_dns", "connect_alternate_dns"],
+    "schema_registry": ["schema_private_dns", "schema_alternate_dns" ],
+    "control_center": ["control_center_private_dns", "control_center_alternate_dns"],
+    "ksql": ["ksql_private_dns", "ksql_alternate_dns"],
+    "kafka_rest": ["rest_private_dns", "rest_alternate_dns"],
+    "zookeeper": ["zookeeper_private_dns", "zookeeper_alternate_dns"]
 }
 
 KERBEROS_PRINCIPALS = {
@@ -64,16 +63,25 @@ class TerraformResults:
 
     def filter_json(self):
         for key, name in OUTPUT_KEYS.items():
-            ip = self.filter_item(name)[0]
+            ip = self.filter_item(name[0])
+            alt = self.filter_item(name[1])
+
             self.all_ips += ip
-            self.ip_dict[key] = ip
+
+            if alt:
+                self.ip_dict[key] = (ip, alt)
+            else:
+                self.ip_dict[key] = ip
 
         self.create_kerberos_dict()
 
         self.ip_dict[CLUSTER_DATA] = self.json_output[CLUSTER_DATA]["value"]
 
     def filter_item(self, name):
-        return self.json_output[name]["value"]
+        if name in self.json_output:
+            return self.json_output[name]["value"][0]
+        else:
+            return None
 
     def output(self):
         self.print_hosts()
@@ -91,6 +99,7 @@ class TerraformResults:
             for (x, y) in self.ip_dict.items()
             if x not in "cluster_data"
         }
+        print(data)
         with open(self.username + ".json", "w+") as f:
             json.dump(data, f, indent=4)
 
