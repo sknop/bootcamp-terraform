@@ -46,6 +46,7 @@ resource "aws_instance" "zookeepers" {
 
 resource "aws_route53_record" "zookeepers" {
   count = var.zk-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "zookeeper-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -90,6 +91,7 @@ resource "aws_instance" "brokers" {
 
 resource "aws_route53_record" "brokers" {
   count = var.broker-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "kafka-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -99,6 +101,7 @@ resource "aws_route53_record" "brokers" {
 
 resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
+  allow_overwrite = true
   ami           = var.aws-ami-id
   instance_type = var.connect-instance-type
   availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
@@ -124,6 +127,7 @@ resource "aws_instance" "connect-cluster" {
 
 resource "aws_route53_record" "connect-cluster" {
   count = var.connect-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "connect-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -158,6 +162,7 @@ resource "aws_instance" "schema" {
 
 resource "aws_route53_record" "schema" {
   count = var.schema-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "schema-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -193,6 +198,7 @@ resource "aws_instance" "control-center" {
 
 resource "aws_route53_record" "control-center" {
   count = var.c3-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "controlcenter-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -229,6 +235,7 @@ resource "aws_instance" "rest" {
 
 resource "aws_route53_record" "rest" {
   count = var.rest-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "rest-${count.index}.${var.dns-suffix}"
   type = "A"
@@ -264,6 +271,7 @@ resource "aws_instance" "ksql" {
 
 resource "aws_route53_record" "ksql" {
   count = var.ksql-count
+  allow_overwrite = true
   zone_id = var.hosted-zone-id
   name = "ksql-${count.index}.${var.dns-suffix}"
   type = "A"
