@@ -101,7 +101,6 @@ resource "aws_route53_record" "brokers" {
 
 resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
-  allow_overwrite = true
   ami           = var.aws-ami-id
   instance_type = var.connect-instance-type
   availability_zone = var.availability-zone[count.index % length(var.availability-zone)]

@@ -45,6 +45,7 @@ class TerraformResults:
         self.json_output = self.parse_json()
         self.all_ips = []
         self.ip_dict = {}
+        self.host_dict = {}
         self.kerberos_dict = {}
 
         self.filter_json()
@@ -73,9 +74,12 @@ class TerraformResults:
             else:
                 self.ip_dict[key] = ip
 
+            self.host_dict[key] = ip
+
         self.create_kerberos_dict()
 
         self.ip_dict[CLUSTER_DATA] = self.json_output[CLUSTER_DATA]["value"]
+        self.host_dict[CLUSTER_DATA] = self.json_output[CLUSTER_DATA]["value"]
 
     def filter_item(self, name):
         if name in self.json_output:
@@ -105,7 +109,7 @@ class TerraformResults:
     def print_hosts(self):
         host_filename = self.tempFile.replace(".j2", ".yml")
         with open(host_filename, "w+") as f:
-            print(self.template.render(self.ip_dict), file=f)
+            print(self.template.render(self.host_dict), file=f)
 
     def print_kerberos(self):
         print("Kerberos list:\n")
