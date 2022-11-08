@@ -23,11 +23,11 @@ availability-zone = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
 subnet-id = ["subnet-01f6b834bb0ca7019", "subnet-0e03ebc6c8ac05ea5", "subnet-089e41d25af163bcb"]
 
 zk-instance-type = "t3a.medium"
-broker-instance-type = "r5.2xlarge"
+broker-instance-type = "r5.xlarge"
 schema-instance-type = "t3a.medium"
 connect-instance-type = "t3a.large"
 rest-instance-type = "t3a.medium"
-c3-instance-type = "r5.2xlarge"
+c3-instance-type = "r5.xlarge"
 ksql-instance-type = "t3a.large"
 client-instance-type = "t3a.large"
 

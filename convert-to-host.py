@@ -17,11 +17,11 @@ OUTPUT_KEYS = {
 
 KERBEROS_PRINCIPALS = {
     "kafka_broker": "kafka",
-    "kafka_connect": "connect",
-    "schema_registry": "schemaregistry",
-    "control_center": "controlcenter",
-    "ksql": "ksql",
-    "kafka_rest": "rest",
+    "kafka_connect": "kafka-connect",
+    "schema_registry": "schema-registry",
+    "control_center": "control-center",
+    "ksql": "ksqldb",
+    "kafka_rest": "kafka_rest",
     "zookeeper": "zookeeper",
 }
 
