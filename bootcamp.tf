@@ -40,8 +40,8 @@ resource "aws_instance" "zookeepers" {
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
   availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "zookeepers" {
@@ -51,7 +51,7 @@ resource "aws_route53_record" "zookeepers" {
   name = "zookeeper-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.zookeepers.*.private_ip, count.index)}"]
+  records = [element(aws_instance.zookeepers.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "brokers" {
@@ -85,8 +85,8 @@ resource "aws_instance" "brokers" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "brokers" {
@@ -96,7 +96,7 @@ resource "aws_route53_record" "brokers" {
   name = "kafka-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.brokers.*.private_ip, count.index)}"]
+  records = [element(aws_instance.brokers.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "connect-cluster" {
@@ -120,8 +120,8 @@ resource "aws_instance" "connect-cluster" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "connect-cluster" {
@@ -131,7 +131,7 @@ resource "aws_route53_record" "connect-cluster" {
   name = "connect-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.connect-cluster.*.private_ip, count.index)}"]
+  records = [element(aws_instance.connect-cluster.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "schema" {
@@ -155,8 +155,8 @@ resource "aws_instance" "schema" {
  }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "schema" {
@@ -166,7 +166,7 @@ resource "aws_route53_record" "schema" {
   name = "schema-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.schema.*.private_ip, count.index)}"]
+  records = [element(aws_instance.schema.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "control-center" {
@@ -191,8 +191,8 @@ resource "aws_instance" "control-center" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "control-center" {
@@ -202,7 +202,7 @@ resource "aws_route53_record" "control-center" {
   name = "controlcenter-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.control-center.*.private_ip, count.index)}"]
+  records = [element(aws_instance.control-center.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "rest" {
@@ -228,8 +228,8 @@ resource "aws_instance" "rest" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "rest" {
@@ -239,7 +239,7 @@ resource "aws_route53_record" "rest" {
   name = "rest-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.rest.*.private_ip, count.index)}"]
+  records = [element(aws_instance.rest.*.private_ip, count.index)]
 }
 
 resource "aws_instance" "ksql" {
@@ -264,8 +264,8 @@ resource "aws_instance" "ksql" {
   }
 
   subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  vpc_security_group_ids = var.vpc-security-group-ids
-  associate_public_ip_address = true
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
 }
 
 resource "aws_route53_record" "ksql" {
@@ -275,6 +275,6 @@ resource "aws_route53_record" "ksql" {
   name = "ksql-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.ksql.*.private_ip, count.index)}"]
+  records = [element(aws_instance.ksql.*.private_ip, count.index)]
 }
 

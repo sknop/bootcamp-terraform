@@ -30,9 +30,11 @@ variable "key-name" {
 }
 
 variable "zk-count" {
+  type = number
 }
 
 variable "broker-count" {
+  type = number
 }
 
 variable "connect-count" {
@@ -53,6 +55,12 @@ variable "c3-count" {
 
 variable "ksql-count" {
   default = 0
+}
+
+variable "create-monitoring-instances" {
+  description = "If set, will create Prometheus and Grafana instances"
+  type = bool
+  default = false
 }
 
 variable "zk-instance-type" {
@@ -87,9 +95,16 @@ variable "client-instance-type" {
   default = "t3a.large"
 }
 
-variable "hosted-zone-id" {
+variable "prometheus-instance-type" {
+  default = "t3a.large"
 }
 
+variable "grafana-instance-type" {
+  default = "t3a.large"
+}
+
+variable "hosted-zone-id" {
+}
 
 variable "aws-ami-id"  {
 }
@@ -101,10 +116,18 @@ variable "linux-user" {
 variable "vpc-id" {
 }
 
+variable "public-subnet-id" {
+  type = list(string)
+}
+
 variable "subnet-id" {
   type = list(string)
 }
 
-variable "vpc-security-group-ids" {
-  type = list(string)
+variable "internal-vpc-security-group-id" {
+  type = string
+}
+
+variable "external-vpc-security-group-id" {
+  type = string
 }

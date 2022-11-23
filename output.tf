@@ -56,6 +56,22 @@ output "ksql_alternate_dns" {
   value = [aws_route53_record.ksql.*.name]
 }
 
+output "prometheus_private_dns" {
+  value = [aws_instance.prometheus.*.private_dns]
+}
+
+output "prometheus_alternate_dns" {
+  value = [aws_route53_record.prometheus.*.name]
+}
+
+output "grafana_private_dns" {
+  value = [aws_instance.grafana.*.private_dns]
+}
+
+output "grafana_alternate_dns" {
+  value = [aws_route53_record.grafana.*.name]
+}
+
 # cluster data
 output "cluster_data" {
   value = {
@@ -63,3 +79,4 @@ output "cluster_data" {
     "ssh_key" = var.key-name
   }
 }
+
