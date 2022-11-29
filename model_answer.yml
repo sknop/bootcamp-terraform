@@ -29,9 +29,9 @@ all:
     kerberos_kafka_broker_primary: kafka
     kerberos_configure: true
     kerberos:
-      realm: bootcamp.confluent.io
-      kdc_hostname: ip-172-32-0-193.eu-west-1.compute.internal
-      admin_hostname: ip-172-32-0-193.eu-west-1.compute.internal
+      realm: BOOTCAMP-EMEA.CONFLUENT.IO
+      kdc_hostname: samba.bootcamp-emea.confluent.io
+      admin_hostname: samba.bootcamp-emea.confluent.io
       canonicalize: false
       # sasl_protocol: kerberos
     zookeeper_sasl_protocol: kerberos
@@ -40,16 +40,16 @@ all:
     zookeeper_kerberos_principal: "zookeeper/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_broker_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/kafka-{{inventory_hostname_short}}.keytab"
     kafka_broker_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    schema_registry_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/schemaregistry-{{inventory_hostname_short}}.keytab"
-    schema_registry_kerberos_principal: "schemaregistry/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    schema_registry_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/schema-registry-{{inventory_hostname_short}}.keytab"
+    schema_registry_kerberos_principal: "schema-registry/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_rest_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/rest-{{inventory_hostname_short}}.keytab"
     kafka_rest_kerberos_principal: "rest/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    kafka_connect_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/connect-{{inventory_hostname_short}}.keytab"
-    kafka_connect_kerberos_principal: "connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    ksql_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/ksql-{{inventory_hostname_short}}.keytab"
-    ksql_kerberos_principal: "ksql/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    control_center_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/controlcenter-{{inventory_hostname_short}}.keytab"
-    control_center_kerberos_principal: "controlcenter/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    kafka_connect_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/kafka-connect-{{inventory_hostname_short}}.keytab"
+    kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    ksql_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
+    ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    control_center_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/control-center-{{inventory_hostname_short}}.keytab"
+    control_center_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
     # RBAC settings
     #
@@ -119,10 +119,16 @@ all:
 
         confluent.license: # your license file here
 
-        # Schema registry authentiction
+        # Schema registry authentication
         confluent.basic.auth.credentials.source: USER_INFO
         confluent.basic.auth.user.info: 'alice:alice-secret'
-    
+
+        # Standard settings for broker
+        auto.create.topics.enable: false
+        default.replication.factor: 3
+        min.insync.replicas: 2
+        zookeeper.set.acl: true
+
         # Special callback for ldap listener
         listener.name.ldap.plain.sasl.server.callback.handler.class: io.confluent.security.auth.provider.ldap.LdapAuthenticateCallbackHandler
         # From https://docs.confluent.io/platform/current/kafka/configure-mds/mutual-tls-auth-rbac.html#principal-mapping-rules-for-ssl-listeners-extract-a-principal-from-a-certificate
