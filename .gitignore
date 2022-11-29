@@ -4,4 +4,4 @@
 /.terraform.lock.hcl
 *.json
 *.yml
-
+terraform.tfvars
