@@ -28,7 +28,7 @@ resource "aws_instance" "zookeepers" {
   }
 
   tags = {
-    Name = "${var.owner-name}-zookeeper-${count.index}"
+    Name = "${var.dns-suffix}-zookeeper-${count.index}"
     description = "zookeeper nodes - Managed by Terraform"
     role = "zookeeper"
     zookeeperid = count.index
@@ -68,7 +68,7 @@ resource "aws_instance" "brokers" {
   }
 
   tags = {
-    Name = "${var.owner-name}-broker-${count.index}"
+    Name = "${var.dns-suffix}-broker-${count.index}"
     description = "broker nodes - Managed by Terraform"
     nice-name = "kafka-${count.index}"
     big-nice-name = "follower-kafka-${count.index}"
@@ -106,7 +106,7 @@ resource "aws_instance" "connect-cluster" {
   availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
   tags = {
-    Name = "${var.owner-name}-connect-${count.index}"
+    Name = "${var.dns-suffix}-connect-${count.index}"
     description = "Connect nodes - Managed by Terraform"
     role = "connect"
     Schedule = "mon-8am-fri-6pm"
@@ -141,7 +141,7 @@ resource "aws_instance" "schema" {
   availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
   key_name = var.key-name
   tags = {
-    Name = "${var.owner-name}-schema-${count.index}"
+    Name = "${var.dns-suffix}-schema-${count.index}"
     description = "Schema nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -181,7 +181,7 @@ resource "aws_instance" "control-center" {
   }
 
   tags = {
-    Name = "${var.owner-name}-control-center-${count.index}"
+    Name = "${var.dns-suffix}-control-center-${count.index}"
     description = "Control Center nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -218,7 +218,7 @@ resource "aws_instance" "rest" {
   }
 
   tags = {
-    Name = "${var.owner-name}-rest-${count.index}"
+    Name = "${var.dns-suffix}-rest-${count.index}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
@@ -254,7 +254,7 @@ resource "aws_instance" "ksql" {
   }
 
   tags = {
-    Name = "${var.owner-name}-ksql-${count.index}"
+    Name = "${var.dns-suffix}-ksql-${count.index}"
     description = "Rest nodes - Managed by Terraform"
     role = "schema"
     Schedule = "mon-8am-fri-6pm"
