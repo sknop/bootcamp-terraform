@@ -21,7 +21,7 @@ resource "aws_instance" "prometheus" {
   }
 
   tags = {
-    Name = "${var.owner-name}-prometheus"
+    Name = "${var.dns-suffix}-prometheus"
     description = "Prometheus node - Managed by Terraform"
     role = "prometheus"
     Schedule = "zookeeper-mon-8am-fri-6pm"
@@ -57,7 +57,7 @@ resource "aws_instance" "grafana" {
   }
 
   tags = {
-    Name = "${var.owner-name}-grafana"
+    Name = "${var.dns-suffix}-grafana"
     description = "Grafana node - Managed by Terraform"
     role = "grafana"
     Schedule = "zookeeper-mon-8am-fri-6pm"
