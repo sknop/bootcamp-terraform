@@ -12,10 +12,10 @@ all:
 
     ssl_enabled: true
     ssl_provided_keystore_and_truststore: true
-    ssl_keystore_filepath: "/home/ubuntu/partners/ssl/{{inventory_hostname}}-keystore.jks"
+    ssl_keystore_filepath: "/home/ubuntu/ssl/{{inventory_hostname}}-keystore.jks"
     ssl_keystore_key_password: changeme
     ssl_keystore_store_password: changeme
-    ssl_truststore_filepath: "/home/ubuntu/partners/ssl/kafka-truststore.jks"
+    ssl_truststore_filepath: "/home/ubuntu/ssl/kafka-truststore.jks"
     ssl_truststore_password: changeme
     ssl_truststore_ca_cert_alias: root-ca
 
@@ -29,26 +29,26 @@ all:
     kerberos_kafka_broker_primary: kafka
     kerberos_configure: true
     kerberos:
-      realm: BOOTCAMP-EMEA.CONFLUENT.IO
-      kdc_hostname: samba.bootcamp-emea.confluent.io
-      admin_hostname: samba.bootcamp-emea.confluent.io
+      realm: BOOTCAMP-REGION.CONFLUENT.IO
+      kdc_hostname: samba.bootcamp-region.confluent.io
+      admin_hostname: samba.bootcamp-region.confluent.io
       canonicalize: false
       # sasl_protocol: kerberos
     zookeeper_sasl_protocol: kerberos
 
-    zookeeper_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/zookeeper-{{inventory_hostname_short}}.keytab"
+    zookeeper_kerberos_keytab_path: "/home/ubuntu/kerberos/zookeeper-{{inventory_hostname_short}}.keytab"
     zookeeper_kerberos_principal: "zookeeper/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    kafka_broker_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/kafka-{{inventory_hostname_short}}.keytab"
+    kafka_broker_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-{{inventory_hostname_short}}.keytab"
     kafka_broker_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    schema_registry_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/schema-registry-{{inventory_hostname_short}}.keytab"
+    schema_registry_kerberos_keytab_path: "/home/ubuntu/kerberos/schema-registry-{{inventory_hostname_short}}.keytab"
     schema_registry_kerberos_principal: "schema-registry/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    kafka_rest_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/rest-{{inventory_hostname_short}}.keytab"
+    kafka_rest_kerberos_keytab_path: "/home/ubuntu/kerberos/rest-{{inventory_hostname_short}}.keytab"
     kafka_rest_kerberos_principal: "rest/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    kafka_connect_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/kafka-connect-{{inventory_hostname_short}}.keytab"
+    kafka_connect_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-connect-{{inventory_hostname_short}}.keytab"
     kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    ksql_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
+    ksql_kerberos_keytab_path: "/home/ubuntu/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
     ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    control_center_kerberos_keytab_path: "/home/ubuntu/partners/kerberos/control-center-{{inventory_hostname_short}}.keytab"
+    control_center_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
     control_center_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
     # RBAC settings
@@ -98,20 +98,20 @@ all:
     kafka_broker_custom_properties:
         ldap.java.naming.factory.initial: com.sun.jndi.ldap.LdapCtxFactory
         ldap.com.sun.jndi.ldap.read.timeout: 3000
-        ldap.java.naming.provider.url: ldaps://samba.bootcamp.confluent.io
+        ldap.java.naming.provider.url: ldaps://samba.bootcamp-region.confluent.io
         ldap.java.naming.security.protocol: SSL
         ldap.ssl.truststore.location: "{{kafka_broker_truststore_path}}"
         ldap.ssl.truststore.password: "{{kafka_broker_truststore_storepass}}"
 
-        ldap.java.naming.security.principal: charlie@BOOTCAMP-PARTNERS.CONFLUENT.IO
+        ldap.java.naming.security.principal: charlie@BOOTCAMP-REGION.CONFLUENT.IO
         ldap.java.naming.security.credentials: charlie-secret
         ldap.java.naming.security.authentication: simple
 
-        ldap.user.search.base: OU=Users,OU=Kafka,DC=BOOTCAMP-PARTNERS,DC=CONFLUENT,DC=IO
+        ldap.user.search.base: OU=Users,OU=Kafka,DC=BOOTCAMP-REGION,DC=CONFLUENT,DC=IO
         ldap.search.mode: USERS
         ldap.user.name.attribute: sAMAccountName
         ldap.user.memberof.attribute: memberOf
-        ldap.user.memberof.attribute.pattern: CN=(.*),OU=Groups,OU=Kafka,DC=bootcamp-partners,DC=confluent,DC=io
+        ldap.user.memberof.attribute.pattern: CN=(.*),OU=Groups,OU=Kafka,DC=bootcamp-REGION,DC=confluent,DC=io
         ldap.user.object.class: user
 
         # We always forget this
