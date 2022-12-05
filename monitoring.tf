@@ -3,7 +3,7 @@
 
 resource "random_integer" "monitoring-id" {
   min = 0
-  max = length(var.public-subnet-id)
+  max = length(var.public-subnet-id) - 1
 }
 
 locals {
