@@ -1,0 +1,9 @@
+${jsonencode({
+    "kafka": [for addr in zookeepers : "${addr}"],
+    "kafka-connect": [for addr in kafka_connects : "${addr}"],
+    "kafka-connect": [for addr in kafka_connects : "${addr}"],
+    "schema-registry": [for addr in schema_registries : "${addr}"],
+    "control-center": [for addr in control_centers : "${addr}"],
+    "ksqldb": [for addr in ksqls : "${addr}"],
+    "kafka_rest": [for addr in kafka_rests : "${addr}"],
+})}
