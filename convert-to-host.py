@@ -24,6 +24,7 @@ KERBEROS_PRINCIPALS = {
 }
 
 CLUSTER_DATA = "cluster_data"
+HOSTED_ZONE = "hosted_zone"
 
 
 def create_template(temp_file):
@@ -45,7 +46,6 @@ class TerraformResults:
         self.ip_dict = {}
         self.host_dict = {}
         self.kerberos_dict = {}
-
         self.filter_json()
 
     def parse_json(self):
@@ -60,14 +60,28 @@ class TerraformResults:
             ip_list = self.ip_dict[key]
             self.kerberos_dict[name] = ip_list
 
+    def append_hosted_zone(self, hosted_zone):
+        for key, hosts in self.ip_dict.items():
+            full_hosts = []
+            for host in hosts[1]:
+                full_host = host + '.' + hosted_zone
+                full_hosts.append(full_host)
+            hosts.append(full_hosts)
+
     def filter_json(self):
+        hosted_zone = self.filter_item(HOSTED_ZONE)
+
         for key, name in OUTPUT_KEYS.items():
             ip = self.filter_item(name[0])
             alt = self.filter_item(name[1])
 
             self.all_ips += ip
 
-            if alt:
+            if hosted_zone:
+                # This is rather hacky - we create a third array with the hosted_zone attached
+                # Rather than creating another variable, just use list comprehension
+                self.ip_dict[key] = (ip, alt, [h + '.' + hosted_zone for h in alt])
+            elif alt:
                 self.ip_dict[key] = (ip, alt)
             else:
                 self.ip_dict[key] = ip
@@ -81,7 +95,11 @@ class TerraformResults:
 
     def filter_item(self, name):
         if name in self.json_output:
-            return self.json_output[name]["value"][0]
+            entry = self.json_output[name]["value"]
+            if type(entry) == str:
+                return entry
+            elif type(entry) == list:
+                return entry[0]
         else:
             return None
 
