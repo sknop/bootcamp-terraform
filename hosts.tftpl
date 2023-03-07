@@ -1,0 +1,34 @@
+zookeeper:
+%{ for addr in zookeepers ~}
+    ${addr}:
+%{ endfor ~}
+
+kafka_broker:
+%{ for addr in kafka_brokers ~}
+    ${addr}:
+%{ endfor ~}
+
+kafka_connect:
+%{ for addr in kafka_connects ~}
+    ${addr}:
+%{ endfor ~}
+
+schema_registry:
+%{ for addr in schema_registries ~}
+    ${addr}:
+%{ endfor ~}
+
+kafka_rest:
+%{ for addr in kafka_rests ~}
+    ${addr}:
+%{ endfor ~}
+
+ksql:
+%{ for addr in ksqls ~}
+    ${addr}:
+%{ endfor ~}
+
+control_center:
+%{ for addr in control_centers ~}
+    ${addr}:
+%{ endfor ~}
