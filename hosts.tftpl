@@ -7,36 +7,43 @@ all:
     ansible_ssh_private_key_file: <<path-to-pem-file>>
 
 zookeeper:
+    hosts:
 %{ for addr in zookeepers ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 kafka_broker:
+    hosts:
 %{ for addr in kafka_brokers ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 kafka_connect:
+    hosts:
 %{ for addr in kafka_connects ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 schema_registry:
+    hosts:
 %{ for addr in schema_registries ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 kafka_rest:
+    hosts:
 %{ for addr in kafka_rests ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 ksql:
+    hosts:
 %{ for addr in ksqls ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
 
 control_center:
+    hosts:
 %{ for addr in control_centers ~}
-    ${addr}:
+        ${addr}:
 %{ endfor ~}
