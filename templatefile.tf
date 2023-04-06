@@ -20,6 +20,7 @@ resource "local_file" "ansible_inventory" {
     }
   )
   filename = var.inventory_file
+  file_permission = "664"
 }
 
 variable "json_templatefile" {
@@ -71,4 +72,5 @@ resource "local_file" "hosts_json" {
     }
   )
   filename = var.json_file
+  file_permission = "664"
 }
