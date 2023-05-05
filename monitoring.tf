@@ -3,7 +3,7 @@
 
 resource "random_integer" "monitoring-id" {
   min = 0
-  max = length(var.public-subnet-id) - 1
+  max = length(var.public-subnet-ids) - 1
 }
 
 locals {
@@ -29,8 +29,8 @@ resource "aws_instance" "prometheus" {
     region = var.region
   }
 
-  subnet_id = var.public-subnet-id[local.monitoring-placement]
-  availability_zone = var.availability-zone[local.monitoring-placement]
+  subnet_id = var.public-subnet-ids[local.monitoring-placement]
+  availability_zone = var.availability-zones[local.monitoring-placement]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id, var.external-vpc-security-group-id ]
   associate_public_ip_address = true
 }
@@ -65,8 +65,8 @@ resource "aws_instance" "grafana" {
     region = var.region
   }
 
-  subnet_id = var.public-subnet-id[local.monitoring-placement]
-  availability_zone = var.availability-zone[local.monitoring-placement]
+  subnet_id = var.public-subnet-ids[local.monitoring-placement]
+  availability_zone = var.availability-zones[local.monitoring-placement]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id, var.external-vpc-security-group-id ]
   associate_public_ip_address = true
 }

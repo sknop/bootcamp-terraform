@@ -4,7 +4,7 @@ variable "region" {
   default = "eu-west-1"
 }
 
-variable "availability-zone" {
+variable "availability-zones" {
   type = list(string)
 }
 
@@ -114,13 +114,14 @@ variable "linux-user" {
 }
 
 variable "vpc-id" {
+  type = string
 }
 
-variable "public-subnet-id" {
+variable "public-subnet-ids" {
   type = list(string)
 }
 
-variable "subnet-id" {
+variable "private-subnet-ids" {
   type = list(string)
 }
 

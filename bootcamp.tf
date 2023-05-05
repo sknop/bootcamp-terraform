@@ -38,8 +38,8 @@ resource "aws_instance" "zookeepers" {
     role_region = "zookeepers-${var.region}"
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -58,7 +58,7 @@ resource "aws_instance" "brokers" {
   count         = var.broker-count
   ami           = var.aws-ami-id
   instance_type = var.broker-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
 
     # security_groups = ["${var.security_group}"]
   key_name = var.key-name
@@ -84,7 +84,7 @@ resource "aws_instance" "brokers" {
     role_region = "brokers-${var.region}"
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -103,7 +103,7 @@ resource "aws_instance" "connect-cluster" {
   count         = var.connect-count
   ami           = var.aws-ami-id
   instance_type = var.connect-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
   key_name = var.key-name
   tags = {
     Name = "${var.dns-suffix}-connect-${count.index}"
@@ -119,7 +119,7 @@ resource "aws_instance" "connect-cluster" {
     volume_size = 20 # 20 GB
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -138,7 +138,7 @@ resource "aws_instance" "schema" {
   count         = var.schema-count
   ami           = var.aws-ami-id
   instance_type = var.schema-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
   key_name = var.key-name
   tags = {
     Name = "${var.dns-suffix}-schema-${count.index}"
@@ -154,7 +154,7 @@ resource "aws_instance" "schema" {
     volume_size = 20 # 20 GB
  }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -173,7 +173,7 @@ resource "aws_instance" "control-center" {
   count         = var.c3-count
   ami           = var.aws-ami-id
   instance_type = var.c3-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
   key_name = var.key-name
 
   root_block_device {
@@ -190,7 +190,7 @@ resource "aws_instance" "control-center" {
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -209,7 +209,7 @@ resource "aws_instance" "rest" {
   count         = var.rest-count
   ami           = var.aws-ami-id
   instance_type = var.rest-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
 
   key_name = var.key-name
 
@@ -227,7 +227,7 @@ resource "aws_instance" "rest" {
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
@@ -246,7 +246,7 @@ resource "aws_instance" "ksql" {
   count         = var.ksql-count
   ami           = var.aws-ami-id
   instance_type = var.ksql-instance-type
-  availability_zone = var.availability-zone[count.index % length(var.availability-zone)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
   key_name = var.key-name
 
   root_block_device {
@@ -263,7 +263,7 @@ resource "aws_instance" "ksql" {
     role_region = "schema-${var.region}"
   }
 
-  subnet_id = var.subnet-id[count.index % length(var.subnet-id)]
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
 }
