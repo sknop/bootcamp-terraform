@@ -10,6 +10,7 @@ resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/${var.hosts_templatefile}",
     {
       zookeepers = aws_instance.zookeepers.*.private_dns
+      controllers = aws_instance.controllers.*.private_dns
       kafka_brokers =  aws_instance.brokers.*.private_dns
       kafka_broker_azs =  aws_instance.brokers.*.availability_zone
       kafka_connects = aws_instance.connect-cluster.*.private_dns
@@ -38,6 +39,11 @@ resource "local_file" "hosts_json" {
         aws_instance.zookeepers.*.private_dns,
         aws_route53_record.zookeepers.*.name,
         [ for name in aws_route53_record.zookeepers.*.name : "${name}.${data.aws_route53_zone.bootcamp.name}" ]
+      ]
+      controllers = [
+        aws_instance.controllers.*.private_dns,
+        aws_route53_record.controllers.*.name,
+        [ for name in aws_route53_record.controllers.*.name: "${name}.${data.aws_route53_zone.bootcamp.name}" ]
       ]
       kafka_brokers = [
         aws_instance.brokers.*.private_dns,

@@ -54,6 +54,43 @@ resource "aws_route53_record" "zookeepers" {
   records = [element(aws_instance.zookeepers.*.private_ip, count.index)]
 }
 
+resource "aws_instance" "controllers" {
+  count         = var.controller-count
+  ami           = var.aws-ami-id
+  instance_type = var.controller-instance-type
+  key_name = var.key-name
+
+  root_block_device {
+    volume_size = 50
+  }
+
+  tags = {
+    Name = "${var.dns-suffix}-controller-${count.index}"
+    description = "Kafka Controller nodes - Managed by Terraform"
+    role = "controller"
+    controller_id = count.index
+    Schedule = "zookeeper-mon-8am-fri-6pm"
+    sshUser = var.linux-user
+    region = var.region
+    role_region = "controllers-${var.region}"
+  }
+
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
+}
+
+resource "aws_route53_record" "controllers" {
+  count = var.controller-count
+  allow_overwrite = true
+  zone_id = var.hosted-zone-id
+  name = "controller-${count.index}.${var.dns-suffix}"
+  type = "A"
+  ttl = "300"
+  records = [element(aws_instance.controllers.*.private_ip, count.index)]
+}
+
 resource "aws_instance" "brokers" {
   count         = var.broker-count
   ami           = var.aws-ami-id

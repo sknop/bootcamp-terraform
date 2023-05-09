@@ -12,6 +12,12 @@ zookeeper:
         ${addr}:
 %{ endfor ~}
 
+kafka_controller:
+    hosts:
+%{ for addr in kafka_controllers ~}
+        ${addr}:
+%{ endfor ~}
+
 kafka_broker:
     hosts:
 %{ for addr,az in zipmap(kafka_brokers, kafka_broker_azs) ~}

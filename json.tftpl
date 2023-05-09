@@ -1,4 +1,5 @@
 ${jsonencode({
+    "controller": [for addr in controllers: "${addr}"],
     "kafka": [for addr in kafka_brokers : "${addr}"],
     "kafka-connect": [for addr in kafka_connects : "${addr}"],
     "kafka-connect": [for addr in kafka_connects : "${addr}"],

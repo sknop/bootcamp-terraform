@@ -18,6 +18,7 @@ subnet-id = ["subnet-0a0a2d1df91e307d9", "subnet-0c9e93e3d38a504f9", "subnet-0b9
 public-subnet-id = ["subnet-0ab31422173f09594", "subnet-0374dbf2e1013cded", "subnet-0e60f504f82eb58d7",]
 
 zk-count = 3
+controller-count = 0
 broker-count = 4
 connect-count = 2
 schema-count = 2

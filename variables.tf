@@ -33,6 +33,10 @@ variable "zk-count" {
   type = number
 }
 
+variable "controller-count" {
+  type = number
+}
+
 variable "broker-count" {
   type = number
 }
@@ -64,6 +68,10 @@ variable "create-monitoring-instances" {
 }
 
 variable "zk-instance-type" {
+  default = "t3a.large"
+}
+
+variable "controller-instance-type" {
   default = "t3a.large"
 }
 

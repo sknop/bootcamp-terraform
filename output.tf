@@ -8,6 +8,14 @@ output "zookeeper_alternate_dns" {
   value = [aws_route53_record.zookeepers.*.name]
 }
 
+output "controller_private_dns" {
+  value = [aws_instance.controllers.*.private_dns]
+}
+
+output "controller_alternate_dns" {
+  value = [aws_route53_record.controllers.*.name]
+}
+
 output "broker_private_dns" {
   value = [aws_instance.brokers.*.private_dns]
 }
