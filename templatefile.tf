@@ -10,7 +10,7 @@ resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/${var.hosts_templatefile}",
     {
       zookeepers = aws_instance.zookeepers.*.private_dns
-      controllers = aws_instance.controllers.*.private_dns
+      kafka_controllers = aws_instance.controllers.*.private_dns
       kafka_brokers =  aws_instance.brokers.*.private_dns
       kafka_broker_azs =  aws_instance.brokers.*.availability_zone
       kafka_connects = aws_instance.connect-cluster.*.private_dns
