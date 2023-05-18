@@ -13,9 +13,9 @@ hosted-zone-id = "Z031101315QZYPTJNNUTX"
 internal-vpc-security-group-id = "sg-0da2df059c6a02c99"
 external-vpc-security-group-id = "sg-0a162b57a7fc4fc6b"
 vpc-id = "vpc-08bdc92a356608549"
-availability-zone = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-subnet-id = ["subnet-0a0a2d1df91e307d9", "subnet-0c9e93e3d38a504f9", "subnet-0b912f5655f9b853e"]
-public-subnet-id = ["subnet-0ab31422173f09594", "subnet-0374dbf2e1013cded", "subnet-0e60f504f82eb58d7",]
+availability-zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+private-subnet-ids = ["subnet-0a0a2d1df91e307d9", "subnet-0c9e93e3d38a504f9", "subnet-0b912f5655f9b853e"]
+public-subnet-ids = ["subnet-0ab31422173f09594", "subnet-0374dbf2e1013cded", "subnet-0e60f504f82eb58d7",]
 
 zk-count = 3
 controller-count = 0
