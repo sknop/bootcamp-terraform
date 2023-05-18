@@ -1,7 +1,7 @@
 # Change these
 owner-email = "sven@confluent.io"
 owner-name = "Sven Erik Knop"
-dns-suffix = "changeme"
+dns-suffix = "changeme-to-your-shortname-or-nickname"
 key-name = "bootcamp-emea-key"
 purpose = "Bootcamp EMEA"
 
