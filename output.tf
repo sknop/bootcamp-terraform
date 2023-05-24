@@ -65,20 +65,29 @@ output "ksql_alternate_dns" {
 }
 
 output "prometheus_private_dns" {
-  value = [aws_instance.prometheus.*.private_dns]
+  value = aws_instance.prometheus.*.private_dns
 }
 
 output "prometheus_alternate_dns" {
-  value = [aws_route53_record.prometheus.*.name]
+  value = aws_route53_record.prometheus.*.name
+}
+
+output "prometheus_public_dns" {
+  value = aws_instance.prometheus.*.public_dns
 }
 
 output "grafana_private_dns" {
-  value = [aws_instance.grafana.*.private_dns]
+  value = aws_instance.grafana.*.private_dns
 }
 
 output "grafana_alternate_dns" {
-  value = [aws_route53_record.grafana.*.name]
+  value = aws_route53_record.grafana.*.name
 }
+
+output "grafana_public_dns" {
+  value = aws_instance.grafana.*.public_dns
+}
+
 
 # cluster data
 output "cluster_data" {
