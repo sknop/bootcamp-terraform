@@ -6,10 +6,11 @@ all:
     ansible_become: true
     ansible_ssh_private_key_file: /home/ubuntu/.ssh/bootcamp.pem
 
+    region: emea
+
     regenerate_keystore_and_truststore: true
     jmxexporter_enabled: true
-
-    region: emea
+    jmxexporter_version: 0.18.0
 
     ssl_enabled: true
     ssl_provided_keystore_and_truststore: true
@@ -21,8 +22,7 @@ all:
     ssl_truststore_ca_cert_alias: root-ca
 
     ssl_mutual_auth_enabled: true
-    zookeeper_quorum_authentication_type: mtls
-    zookeeper_client_authentication_type: digest
+    kafka_controller_sasl_protocol: kerberos
 
     #
     # Kerberos settings
@@ -30,14 +30,14 @@ all:
     kerberos_kafka_broker_primary: kafka
     kerberos_configure: true
     kerberos:
-      realm: "BOOTCAMP-{{region | upper}.CONFLUENT.IO"
+      realm: "BOOTCAMP-{{region | upper}}.CONFLUENT.IO"
       kdc_hostname: "samba.bootcamp-{{region}}.confluent.io"
       admin_hostname: "samba.bootcamp-{{region}}.confluent.io"
       canonicalize: false
       # sasl_protocol: kerberos
 
-    zookeeper_kerberos_keytab_path: "/home/ubuntu/kerberos/zookeeper-{{inventory_hostname_short}}.keytab"
-    zookeeper_kerberos_principal: "zookeeper/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    kafka_controller_kerberos_keytab_path: "/home/ubuntu/kerberos/controller-{{inventory_hostname_short}}.keytab"
+    kafka_controller_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_broker_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-{{inventory_hostname_short}}.keytab"
     kafka_broker_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     schema_registry_kerberos_keytab_path: "/home/ubuntu/kerberos/schema-registry-{{inventory_hostname_short}}.keytab"
@@ -57,6 +57,8 @@ all:
     rbac_component_additional_system_admins: [ alice ]
     mds_super_user: mds
     mds_super_user_password: mds-secret
+    kafka_controller_ldap_user: kafka
+    kafka_controller_ldap_password: kafka-secret
     kafka_broker_ldap_user: kafka
     kafka_broker_ldap_password: kafka-secret
     schema_registry_ldap_user: schemaregistry
@@ -69,14 +71,6 @@ all:
     kafka_rest_ldap_password: rest-secret
     control_center_ldap_user: controlcenter
     control_center_ldap_password: c3-secret
-
-    sasl_scram_users:
-      alice:
-        principal: alice
-        password: alice-secret
-      charlie:
-        principal: charlie
-        password: charlie-secret
 
     kafka_broker_custom_listeners:
       broker:
@@ -102,12 +96,6 @@ all:
         ssl_enabled: true
         ssl_mutual_auth_enabled: false
         sasl_protocol: plain
-      scram_listener:
-        name: SCRAM
-        port: 9095
-        ssl_enabled: true
-        ssl_mutual_auth_enabled: true
-        sasl_protocol: scram
 
     kafka_broker_custom_properties:
       ldap.java.naming.factory.initial: com.sun.jndi.ldap.LdapCtxFactory
@@ -141,7 +129,6 @@ all:
       auto.create.topics.enable: false
       default.replication.factor: 3
       min.insync.replicas: 2
-      zookeeper.set.acl: true
 
       # Special callback for ldap listener
       listener.name.ldap.plain.sasl.server.callback.handler.class: io.confluent.security.auth.provider.ldap.LdapAuthenticateCallbackHandler
