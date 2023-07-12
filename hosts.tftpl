@@ -16,7 +16,7 @@ kafka_controller:
     hosts:
 %{ for addr,az in zipmap(kafka_controllers, kafka_controller_azs) ~}
         ${addr}:
-            kafka_broker_custom_properties:
+            kafka_controller_custom_properties:
                 broker.rack: ${az}
 %{ endfor ~}
 
