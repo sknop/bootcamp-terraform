@@ -11,6 +11,7 @@ resource "local_file" "ansible_inventory" {
     {
       zookeepers = aws_instance.zookeepers.*.private_dns
       kafka_controllers = aws_instance.controllers.*.private_dns
+      kafka_controller_azs = aws_instance.controllers.*.availability_zone
       kafka_brokers =  aws_instance.brokers.*.private_dns
       kafka_broker_azs =  aws_instance.brokers.*.availability_zone
       kafka_connects = aws_instance.connect-cluster.*.private_dns

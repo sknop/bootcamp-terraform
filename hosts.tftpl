@@ -14,8 +14,10 @@ zookeeper:
 
 kafka_controller:
     hosts:
-%{ for addr in kafka_controllers ~}
+%{ for addr,az in zipmap(kafka_controllers, kafka_controller_azs) ~}
         ${addr}:
+            kafka_broker_custom_properties:
+                broker.rack: ${az}
 %{ endfor ~}
 
 kafka_broker:
