@@ -31,9 +31,13 @@ c3-count = 1
 create-monitoring-instances = true
 
 # Leave these alone unless you know what you are doing
-# Hyderabad (ap-south-2): t3a --> t3 (t3a is not available in that region) 
+# The following regions need to change instances t3a --> t3, because t3a is not available in that region yet
+# Hyderabad (ap-south-2)
+# Spain (eu-south-2)
+# UAE (me-central-1)
 
 zk-instance-type = "t3a.medium"
+controller-instance-type = "t3a.medium"
 broker-instance-type = "r5.xlarge"
 schema-instance-type = "t3a.medium"
 connect-instance-type = "t3a.large"
