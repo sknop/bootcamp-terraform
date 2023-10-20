@@ -23,6 +23,7 @@ all:
 
     ssl_mutual_auth_enabled: true
     kafka_controller_sasl_protocol: kerberos
+    sasl_protocol: kerberos
 
     #
     # Kerberos settings
@@ -90,6 +91,7 @@ all:
         port: 9093
         ssl_enabled: true
         ssl_mutual_auth_enabled: true
+        sasl_protocol: none
       ldap_listener:
         name: LDAP
         port: 9094
