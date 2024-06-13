@@ -41,6 +41,11 @@ variable "broker-count" {
   type = number
 }
 
+variable "broker-storage" {
+  type = number
+  default = 64 # 64 GB
+}
+
 variable "connect-count" {
   default = 0
 }
