@@ -106,7 +106,7 @@ resource "aws_instance" "brokers" {
   key_name = var.key-name
 
   root_block_device {
-    volume_size = 64 # 64 GB
+    volume_size = var.broker-storage
   }
 
   tags = {
