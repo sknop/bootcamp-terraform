@@ -10,7 +10,9 @@ all:
 
     regenerate_keystore_and_truststore: true
     jmxexporter_enabled: true
-    jmxexporter_version: 0.18.0
+    jmxexporter_version: 0.20.0
+
+    deployment_strategy: parallel # instead of rolling
 
     ssl_enabled: true
     ssl_provided_keystore_and_truststore: true
@@ -25,6 +27,39 @@ all:
     kafka_controller_sasl_protocol: kerberos
     sasl_protocol: kerberos
 
+    kafka_connect_confluent_hub_plugins:
+      - confluentinc/kafka-connect-oracle-cdc:latest
+      - debezium/debezium-connector-mysql:latest
+      - debezium/debezium-connector-postgresql:latest
+
+    kafka_connect_custom_properties:
+      key.converter: io.confluent.connect.avro.AvroConverter
+      key.converter.schema.registry.url: "{{schema_registry_url}}"
+      key.converter.enhanced.avro.schema.support: true
+
+      value.converter: io.confluent.connect.avro.AvroConverter
+      value.converter.schema.registry.url: "{{schema_registry_url}}"
+      value.converter.enhanced.avro.schema.support: true
+
+      key.converter.basic.auth.credentials.source: USER_INFO
+      key.converter.basic.auth.user.info: 'alice:alice-secret'
+
+      value.converter.basic.auth.credentials.source: USER_INFO
+      value.converter.basic.auth.user.info: 'alice:alice-secret'
+
+      key.converter.schema.registry.ssl.truststore.location: "{{kafka_connect_truststore_path}}"
+      key.converter.schema.registry.ssl.truststore.password: "{{kafka_connect_truststore_storepass}}"
+      key.converter.schema.registry.ssl.keystore.location: "{{kafka_connect_keystore_path}}"
+      key.converter.schema.registry.ssl.keystore.password: "{{kafka_connect_keystore_storepass}}"
+      key.converter.schema.registry.ssl.key.password: "{{kafka_connect_keystore_storepass}}"
+
+      value.converter.schema.registry.ssl.truststore.location: "{{kafka_connect_truststore_path}}"
+      value.converter.schema.registry.ssl.truststore.password: "{{kafka_connect_truststore_storepass}}"
+      value.converter.schema.registry.ssl.keystore.location: "{{kafka_connect_keystore_path}}"
+      value.converter.schema.registry.ssl.keystore.password: "{{kafka_connect_keystore_storepass}}"
+      value.converter.schema.registry.ssl.key.password: "{{kafka_connect_keystore_storepass}}"
+
+      topic.creation.enable: true
     #
     # Kerberos settings
     #

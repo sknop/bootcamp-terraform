@@ -36,6 +36,40 @@ all:
       canonicalize: false
       # sasl_protocol: kerberos
 
+    kafka_connect_confluent_hub_plugins:
+      - confluentinc/kafka-connect-oracle-cdc:latest
+      - debezium/debezium-connector-mysql:latest
+      - debezium/debezium-connector-postgresql:latest
+
+    kafka_connect_custom_properties:
+      key.converter: io.confluent.connect.avro.AvroConverter
+      key.converter.schema.registry.url: "{{schema_registry_url}}"
+      key.converter.enhanced.avro.schema.support: true
+
+      value.converter: io.confluent.connect.avro.AvroConverter
+      value.converter.schema.registry.url: "{{schema_registry_url}}"
+      value.converter.enhanced.avro.schema.support: true
+
+      key.converter.basic.auth.credentials.source: USER_INFO
+      key.converter.basic.auth.user.info: 'alice:alice-secret'
+
+      value.converter.basic.auth.credentials.source: USER_INFO
+      value.converter.basic.auth.user.info: 'alice:alice-secret'
+
+      key.converter.schema.registry.ssl.truststore.location: "{{kafka_connect_truststore_path}}"
+      key.converter.schema.registry.ssl.truststore.password: "{{kafka_connect_truststore_storepass}}"
+      key.converter.schema.registry.ssl.keystore.location: "{{kafka_connect_keystore_path}}"
+      key.converter.schema.registry.ssl.keystore.password: "{{kafka_connect_keystore_storepass}}"
+      key.converter.schema.registry.ssl.key.password: "{{kafka_connect_keystore_storepass}}"
+
+      value.converter.schema.registry.ssl.truststore.location: "{{kafka_connect_truststore_path}}"
+      value.converter.schema.registry.ssl.truststore.password: "{{kafka_connect_truststore_storepass}}"
+      value.converter.schema.registry.ssl.keystore.location: "{{kafka_connect_keystore_path}}"
+      value.converter.schema.registry.ssl.keystore.password: "{{kafka_connect_keystore_storepass}}"
+      value.converter.schema.registry.ssl.key.password: "{{kafka_connect_keystore_storepass}}"
+
+      topic.creation.enable: true
+
     zookeeper_kerberos_keytab_path: "/home/ubuntu/kerberos/zookeeper-{{inventory_hostname_short}}.keytab"
     zookeeper_kerberos_principal: "zookeeper/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_broker_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-{{inventory_hostname_short}}.keytab"
