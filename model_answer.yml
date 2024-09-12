@@ -8,6 +8,7 @@ all:
 
     regenerate_keystore_and_truststore: true
     jmxexporter_enabled: true
+    jmxexporter_version: 1.0.1
 
     region: emea
 

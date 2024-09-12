@@ -10,7 +10,7 @@ all:
 
     regenerate_keystore_and_truststore: true
     jmxexporter_enabled: true
-    jmxexporter_version: 0.20.0
+    jmxexporter_version: 1.0.1
 
     deployment_strategy: parallel # instead of rolling
 
