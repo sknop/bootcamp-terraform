@@ -19,9 +19,9 @@ availability-zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
 private-subnet-ids = ["subnet-0a0a2d1df91e307d9", "subnet-0c9e93e3d38a504f9", "subnet-0b912f5655f9b853e"]
 public-subnet-ids = ["subnet-0ab31422173f09594", "subnet-0374dbf2e1013cded", "subnet-0e60f504f82eb58d7",]
 
-zk-count = 3
-controller-count = 0
-broker-count = 4
+zk-count = 0
+controller-count = 3
+broker-count = 3
 connect-count = 2
 schema-count = 2
 rest-count = 0
