@@ -22,7 +22,7 @@ all:
     ssl_truststore_password: changeme
     ssl_truststore_ca_cert_alias: root-ca
 
-    ssl_mutual_auth_enabled: true
+    ssl_client_authentication: required
     kafka_controller_sasl_protocol: kerberos
     sasl_protocol: kerberos
 
@@ -70,6 +70,14 @@ all:
       canonicalize: false
       # sasl_protocol: kerberos
 
+    sasl_scram_users:
+      alice:
+        principal: alice
+        password: alice-secret
+      charlie:
+        principal: charlie
+        password: charlie-secret
+
     kafka_controller_kerberos_keytab_path: "/home/ubuntu/kerberos/controller-{{inventory_hostname_short}}.keytab"
     kafka_controller_kerberos_principal: "kafka/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_broker_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-{{inventory_hostname_short}}.keytab"
@@ -113,21 +121,21 @@ all:
         ssl_enabled: true
         ssl_mutual_auth_enabled: false
         sasl_protocol: kerberos
-      internal:
-        name: INTERNAL
-        port: 9092
-        ssl_enabled: true
-        ssl_mutual_auth_enabled: false
-        sasl_protocol: oauth
       client_listener:
         name: CLIENT
         port: 9093
         ssl_enabled: true
         ssl_mutual_auth_enabled: true
         sasl_protocol: none
+      scram_listener:
+        name: SCRAM
+        port: 9094
+        ssl_enabled: true
+        ssl_mutual_auth_enabled: true
+        sasl_protocol: scram
       ldap_listener:
         name: LDAP
-        port: 9094
+        port: 9095
         ssl_enabled: true
         ssl_mutual_auth_enabled: false
         sasl_protocol: plain
