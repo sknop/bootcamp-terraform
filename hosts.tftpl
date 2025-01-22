@@ -57,3 +57,11 @@ control_center:
 %{ for addr in control_centers ~}
         ${addr}:
 %{ endfor ~}
+
+prometheus:
+    hosts:
+        ${ prometheus ~}
+
+grafana:
+    hosts:
+        ${ grafana }
