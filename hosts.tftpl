@@ -60,8 +60,13 @@ control_center:
 
 prometheus:
     hosts:
-        ${ prometheus ~}
+%{ for addr in prometheus ~}
+        $ ${addr}:
+%{ endfor ~}
 
 grafana:
     hosts:
-        ${ grafana }
+%{ for addr in grafana ~}
+        $ ${addr}:
+%{ endfor ~}
+
