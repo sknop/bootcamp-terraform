@@ -6,10 +6,12 @@ all:
     ansible_become: true
     ansible_ssh_private_key_file: /home/ubuntu/.ssh/bootcamp.pem
 
-    regenerate_keystore_and_truststore: true
-    jmxexporter_enabled: true
-    jmxexporter_version: 1.0.1
+    region: emea
+    domain: "bootcamp-{{region}}.confluent.io"
 
+    jmxexporter_enabled: true
+    jmxexporter_version: 1.1.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/{{jmxexporter_version}}/jmx_prometheus_javaagent-{{jmxexporter_version}}.jar
     region: emea
 
     ssl_enabled: true

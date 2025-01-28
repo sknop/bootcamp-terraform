@@ -6,10 +6,11 @@ all:
     ansible_become: true
 
     region: emea
+    domain: "bootcamp-{{region}}.confluent.io"
 
-    regenerate_keystore_and_truststore: true
     jmxexporter_enabled: true
-    jmxexporter_version: 1.0.1
+    jmxexporter_version: 1.1.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/{{jmxexporter_version}}/jmx_prometheus_javaagent-{{jmxexporter_version}}.jar
 
     deployment_strategy: parallel # instead of rolling
 
