@@ -21,6 +21,7 @@ resource "local_file" "ansible_inventory" {
       control_centers = aws_instance.control-center.*.private_dns
       prometheus = aws_instance.prometheus.*.private_dns
       grafana = aws_instance.grafana.*.private_dns
+      domain_name = data.aws_route53_zone.bootcamp.name
     }
   )
   filename = var.inventory_file
