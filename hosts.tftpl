@@ -12,12 +12,15 @@ all:
     jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.1.0.jar
     jmxexporter_jar_url_force: true
 
+%{ if length(zookeepers) > 0 }
 zookeeper:
     hosts:
 %{ for addr in zookeepers ~}
         ${addr}:
 %{ endfor ~}
+%{ endif ~}
 
+%{ if length(kafka_controller) > 0 }
 kafka_controller:
     hosts:
 %{ for addr,az in zipmap(kafka_controllers, kafka_controller_azs) ~}
@@ -25,6 +28,7 @@ kafka_controller:
             kafka_controller_custom_properties:
                 broker.rack: ${az}
 %{ endfor ~}
+%{ endif ~}
 
 kafka_broker:
     hosts:
