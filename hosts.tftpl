@@ -20,7 +20,7 @@ zookeeper:
 %{ endfor ~}
 %{ endif ~}
 
-%{ if length(kafka_controller) > 0 }
+%{ if length(kafka_controllers) > 0 }
 kafka_controller:
     hosts:
 %{ for addr,az in zipmap(kafka_controllers, kafka_controller_azs) ~}
