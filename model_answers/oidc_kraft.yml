@@ -129,7 +129,7 @@ all:
     sso_jwks_uri: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/certs
     sso_authorize_uri: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/auth
     sso_token_uri: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/token
-    sso_device_authorization_uri: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/auth
+    sso_device_authorization_uri: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/auth/device
     sso_cli: true
     sso_client_id: c3_sso_login
     sso_client_password: c3_sso_login_secret
