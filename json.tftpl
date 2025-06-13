@@ -5,6 +5,7 @@ ${jsonencode({
     "kafka-connect": [for addr in kafka_connects : "${addr}"],
     "schema-registry": [for addr in schema_registries : "${addr}"],
     "control-center": [for addr in control_centers : "${addr}"],
+    "control-center-next-gen": [for addr in control_center_next_gens : "${addr}"],
     "ksqldb": [for addr in ksqls : "${addr}"],
     "kafka_rest": [for addr in kafka_rests : "${addr}"],
     "zookeeper": [for addr in zookeepers : "${addr}"],
