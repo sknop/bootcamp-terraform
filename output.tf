@@ -49,7 +49,7 @@ output "control_center_alternate_dns" {
 }
 
 
-output "control_center_Next_gen_private_dns" {
+output "control_center_next_gen_private_dns" {
   value = [aws_instance.control-center-next-gen.*.private_dns]
 }
 
