@@ -108,10 +108,6 @@ variable "ksql-instance-type" {
   default = "t3a.large"
 }
 
-variable "client-instance-type" {
-  default = "t3a.large"
-}
-
 variable "prometheus-instance-type" {
   default = "t3a.large"
 }
