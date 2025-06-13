@@ -280,7 +280,7 @@ resource "aws_route53_record" "control-center-next-gen" {
   name = "controlcenter-next-gen-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [aws_instance.control-center.*.private_ip[count.index]]
+  records = [aws_instance.control-center-next-gen.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "rest" {
