@@ -26,7 +26,8 @@ connect-count = 2
 schema-count = 2
 rest-count = 0
 ksql-count = 2
-c3-count = 1
+c3-count = 0
+c3-next-gen-count = 1
 
 create-monitoring-instances = true
 
@@ -42,7 +43,7 @@ broker-instance-type = "r5.xlarge"
 schema-instance-type = "t3a.medium"
 connect-instance-type = "t3a.large"
 rest-instance-type = "t3a.medium"
-c3-instance-type = "r5.xlarge"
+c3-instance-type = "r5.xlarge"   # also for c3-next-gen
 ksql-instance-type = "t3a.large"
 client-instance-type = "t3a.large"
 prometheus-instance-type = "t3a.medium"

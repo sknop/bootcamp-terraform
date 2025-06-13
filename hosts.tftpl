@@ -62,11 +62,21 @@ ksql:
         ${addr}:
 %{ endfor ~}
 
+%{ if length(control_centers) > 0 }
 control_center:
     hosts:
 %{ for addr in control_centers ~}
         ${addr}:
 %{ endfor ~}
+%{ endif ~}
+
+%{ if length(control_center_next_gens) > 0 }
+control_center_next_gen:
+    hosts:
+%{ for addr in control_center_next_gens ~}
+        ${addr}:
+%{ endfor ~}
+%{ endif ~}
 
 prometheus:
     hosts:
