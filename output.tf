@@ -48,6 +48,14 @@ output "control_center_alternate_dns" {
   value = [aws_route53_record.control-center.*.name]
 }
 
+
+output "control_center_Next_gen_private_dns" {
+  value = [aws_instance.control-center-next-gen.*.private_dns]
+}
+
+output "control_center_next_gen_alternate_dns" {
+  value = [aws_route53_record.control-center-next-gen.*.name]
+}
 output "rest_private_dns" {
   value = [aws_instance.rest.*.private_dns]
 }
