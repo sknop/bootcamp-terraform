@@ -62,6 +62,10 @@ variable "c3-count" {
   default = 0
 }
 
+variable "c3-next-gen-count" {
+  default = 0
+}
+
 variable "ksql-count" {
   default = 0
 }

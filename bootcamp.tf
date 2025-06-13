@@ -56,7 +56,7 @@ resource "aws_route53_record" "zookeepers" {
   name = "zookeeper-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.zookeepers.*.private_ip, count.index)]
+  records = [aws_instance.zookeepers.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "controllers" {
@@ -93,7 +93,7 @@ resource "aws_route53_record" "controllers" {
   name = "controller-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.controllers.*.private_ip, count.index)]
+  records = [aws_instance.controllers.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "brokers" {
@@ -138,7 +138,7 @@ resource "aws_route53_record" "brokers" {
   name = "kafka-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.brokers.*.private_ip, count.index)]
+  records = [aws_instance.brokers.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "connect-cluster" {
@@ -173,7 +173,7 @@ resource "aws_route53_record" "connect-cluster" {
   name = "connect-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.connect-cluster.*.private_ip, count.index)]
+  records = [aws_instance.connect-cluster.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "schema" {
@@ -208,7 +208,7 @@ resource "aws_route53_record" "schema" {
   name = "schema-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.schema.*.private_ip, count.index)]
+  records = [aws_instance.schema.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "control-center" {
@@ -237,6 +237,32 @@ resource "aws_instance" "control-center" {
   associate_public_ip_address = false
 }
 
+resource "aws_instance" "control-center-next-gen" {
+  count         = var.c3-next-gen-count
+  ami           = var.aws-ami-id
+  instance_type = var.c3-instance-type
+  availability_zone = var.availability-zones[count.index % length(var.availability-zones)]
+  key_name = var.key-name
+
+  root_block_device {
+    volume_size = 64 # 64GB
+  }
+
+  tags = {
+    Name = "${var.dns-suffix}-control-center-${count.index}"
+    description = "Control Center (net generation) nodes - Managed by Terraform"
+    role = "schema"
+    Schedule = "mon-8am-fri-6pm"
+    sshUser = var.linux-user
+    region = var.region
+    role_region = "schema-${var.region}"
+  }
+
+  subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
+  vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
+  associate_public_ip_address = false
+}
+
 resource "aws_route53_record" "control-center" {
   count = var.c3-count
   allow_overwrite = true
@@ -244,7 +270,17 @@ resource "aws_route53_record" "control-center" {
   name = "controlcenter-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.control-center.*.private_ip, count.index)]
+  records = [aws_instance.control-center.*.private_ip[count.index]]
+}
+
+resource "aws_route53_record" "control-center-next-gen" {
+  count = var.c3-next-gen-count
+  allow_overwrite = true
+  zone_id = var.hosted-zone-id
+  name = "controlcenter-next-gen-${count.index}.${var.dns-suffix}"
+  type = "A"
+  ttl = "300"
+  records = [aws_instance.control-center.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "rest" {
@@ -281,7 +317,7 @@ resource "aws_route53_record" "rest" {
   name = "rest-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.rest.*.private_ip, count.index)]
+  records = [aws_instance.rest.*.private_ip[count.index]]
 }
 
 resource "aws_instance" "ksql" {
@@ -317,6 +353,6 @@ resource "aws_route53_record" "ksql" {
   name = "ksql-${count.index}.${var.dns-suffix}"
   type = "A"
   ttl = "300"
-  records = [element(aws_instance.ksql.*.private_ip, count.index)]
+  records = [aws_instance.ksql.*.private_ip[count.index]]
 }
 
