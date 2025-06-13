@@ -45,7 +45,6 @@ connect-instance-type = "t3a.large"
 rest-instance-type = "t3a.medium"
 c3-instance-type = "r5.xlarge"   # also for c3-next-gen
 ksql-instance-type = "t3a.large"
-client-instance-type = "t3a.large"
 prometheus-instance-type = "t3a.medium"
 grafana-instance-type = "t3a.medium"
 
