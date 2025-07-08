@@ -156,11 +156,11 @@ variable "cflt_partition" {
 }
 
 variable "cflt_managed_by" {
-  default = "user"
+  default = "sven"
 }
 
 variable "cflt_managed_id" {
-  type = string
+  default = "user"
 }
 
 variable "cflt_service" {

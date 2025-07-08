@@ -13,9 +13,11 @@ provider "aws" {
       purpose = var.purpose
       cflt_environment = var.cflt_environment
       cflt_partition = var.cflt_partition
-      cflt_managed_by	= var.cflt_managed_id
+      cflt_managed_by	= var.cflt_managed_by
       cflt_managed_id	= var.cflt_managed_id
-      cflt_service = var.cflt_service
+      cflt_service      = var.cflt_service
+      cflt_environment  = var.cflt_environment
+      cflt_keep_until   = formatdate("YYYY-MM-DD", timeadd(timestamp(),"720h"))
     }
   }
 }

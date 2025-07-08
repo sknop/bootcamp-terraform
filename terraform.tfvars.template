@@ -1,23 +1,23 @@
 # Change these
 owner-email = "sven@confluent.io"
 owner-name = "Sven Erik Knop"
-dns-suffix = "changeme-to-your-shortname-or-nickname"
+dns-suffix = "change-me-to-your-shortname-or-nickname"
 key-name = "bootcamp-emea-key"
 purpose = "Bootcamp EMEA"
-cflt_managed_id = "sven"
+cflt_managed_by = "sven"
 cflt_service = "EMEA"
 
 # Adjust these to your trainer's instructions
 region = "eu-west-1"
-aws-ami-id = "ami-09152cf3ca0526d32"
+aws-ami-id = "<AMI>"
 
-hosted-zone-id = "Z031101315QZYPTJNNUTX"
-internal-vpc-security-group-id = "sg-0da2df059c6a02c99"
-external-vpc-security-group-id = "sg-0a162b57a7fc4fc6b"
-vpc-id = "vpc-08bdc92a356608549"
+hosted-zone-id = "<HOSTZONE>"
+internal-vpc-security-group-id = "<INTERNAL SG>"
+external-vpc-security-group-id = "<EXTERNAL SG>"
+vpc-id = "<VPC ID>>"
 availability-zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-private-subnet-ids = ["subnet-0a0a2d1df91e307d9", "subnet-0c9e93e3d38a504f9", "subnet-0b912f5655f9b853e"]
-public-subnet-ids = ["subnet-0ab31422173f09594", "subnet-0374dbf2e1013cded", "subnet-0e60f504f82eb58d7",]
+private-subnet-ids = ["<SUBNET1>", "<SUBNET2>", "<SUBNET3>"]
+public-subnet-ids = ["<SUBNET1>", "<SUBNET2>", "<SUBNET3>",]
 
 zk-count = 0
 controller-count = 3
