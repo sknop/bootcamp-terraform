@@ -92,8 +92,8 @@ all:
     kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
       # ksql_kerberos_keytab_path: "/home/ubuntu/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
       #ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    control_center_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
-    control_center_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    control_center_next_gen_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
+    control_center_next_gen_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
     # RBAC settings
     #
@@ -118,8 +118,8 @@ all:
     kafka_connect_oauth_password: connect-client-secret
     ksql_oauth_user: ksql-client
     ksql_oauth_password: ksql-client-secret
-    control_center_oauth_user: c3-client
-    control_center_oauth_password: c3-client-secret
+    control_center_next_gen_oauth_user: c3-client
+    control_center_next_gen_oauth_password: c3-client-secret
 
     # variables to enable SSO in Control Center and confluent cli
     sso_mode: oidc
