@@ -4,8 +4,12 @@ owner-name = "Sven Erik Knop"
 dns-suffix = "change-me-to-your-shortname-or-nickname"
 key-name = "bootcamp-emea-key"
 purpose = "Bootcamp EMEA"
-cflt_managed_by = "sven"
-cflt_service = "EMEA"
+
+cflt_environment = "devel"
+cflt_partition = "onprem"
+cflt_managed_by = "user"
+cflt_managed_id	= "sven"
+cflt_service = "CTG"
 
 # Adjust these to your trainer's instructions
 region = "eu-west-1"
