@@ -148,22 +148,23 @@ variable "external-vpc-security-group-id" {
 
 
 variable "cflt_environment" {
-  default = "prod"
+  default = "devel"
 }
 
 variable "cflt_partition" {
-  default = "sales"
+  default = "onprem"
 }
 
 variable "cflt_managed_by" {
-  default = "sven"
+  default = "user"
 }
 
 variable "cflt_managed_id" {
-  default = "user"
+  default = "sven"
 }
 
 variable "cflt_service" {
   description = "This is the theatre of operation, like EMEA or APAC"
   type = string
+  default = "CTG"
 }
