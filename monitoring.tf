@@ -27,6 +27,11 @@ resource "aws_instance" "prometheus" {
     Schedule = "zookeeper-mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.public-subnet-ids[local.monitoring-placement]
@@ -63,6 +68,11 @@ resource "aws_instance" "grafana" {
     Schedule = "zookeeper-mon-8am-fri-6pm"
     sshUser = var.linux-user
     region = var.region
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.public-subnet-ids[local.monitoring-placement]

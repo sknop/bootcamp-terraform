@@ -2,6 +2,9 @@
 // All rights reserved
 
 // Provider
+locals {
+  keep_until = formatdate("YYYY-MM-DD", timeadd(timestamp(),"720h"))
+}
 
 provider "aws" {
   region     = var.region
@@ -17,7 +20,6 @@ provider "aws" {
       cflt_managed_id	= var.cflt_managed_id
       cflt_service      = var.cflt_service
       cflt_environment  = var.cflt_environment
-      cflt_keep_until   = formatdate("YYYY-MM-DD", timeadd(timestamp(),"720h"))
     }
   }
 }
@@ -43,6 +45,11 @@ resource "aws_instance" "zookeepers" {
     sshUser = var.linux-user
     region = var.region
     role_region = "zookeepers-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -80,6 +87,11 @@ resource "aws_instance" "controllers" {
     sshUser = var.linux-user
     region = var.region
     role_region = "controllers-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -119,13 +131,15 @@ resource "aws_instance" "brokers" {
     brokerid = count.index
     role = "broker"
     sshUser = var.linux-user
-    # sshPrivateIp = true // this is only checked for existence, not if it's true or false by terraform.py (ati)
     createdBy = "terraform"
     Schedule = "kafka-mon-8am-fri-6pm"
-    # ansible_python_interpreter = "/usr/bin/python3"
-    #EntScheduler = "mon,tue,wed,thu,fri;1600;mon,tue,wed,thu;fri;sat;0400;"
     region = var.region
     role_region = "brokers-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -157,8 +171,12 @@ resource "aws_instance" "connect-cluster" {
     sshUser = var.linux-user
     region = var.region
     role_region = "connect-${var.region}"
+    cflt_keep_until   = local.keep_until
   }
 
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
+  }
   root_block_device {
     volume_size = 20 # 20 GB
   }
@@ -192,6 +210,11 @@ resource "aws_instance" "schema" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   root_block_device {
@@ -232,6 +255,11 @@ resource "aws_instance" "control-center" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -258,6 +286,11 @@ resource "aws_instance" "control-center-next-gen" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -305,6 +338,11 @@ resource "aws_instance" "rest" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
@@ -341,6 +379,11 @@ resource "aws_instance" "ksql" {
     sshUser = var.linux-user
     region = var.region
     role_region = "schema-${var.region}"
+    cflt_keep_until   = local.keep_until
+  }
+
+  volume_tags = {
+    cflt_keep_until   = local.keep_until
   }
 
   subnet_id = var.private-subnet-ids[count.index % length(var.private-subnet-ids)]
