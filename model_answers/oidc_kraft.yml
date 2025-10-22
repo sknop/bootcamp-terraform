@@ -153,7 +153,7 @@ all:
 
       # Schema registry authentication
       confluent.bearer.auth.credentials.source: OAUTHBEARER
-      confluent.bearer.auth.issuer.endpoint.url: https://samba.bootcamp-{{region}}}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/token
+      confluent.bearer.auth.issuer.endpoint.url: https://samba.bootcamp-{{region}}.confluent.io:8443/realms/Bootcamp/protocol/openid-connect/token
       confluent.bearer.auth.client.id: superuser
       confluent.bearer.auth.client.secret: superuser-secret
 
