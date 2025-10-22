@@ -27,3 +27,12 @@ The connection from the brokers to the controller is secured using Kerberos.
 ## oidc_kraft
 
 This is model answer for a cluster secured via OIDC with a Kraft controller. 
+
+# Additional hints
+
+Watch out for **region** and **domain** in the model answers.
+
+If your domain defined in bootcamp-vpc is bootcamp.confluent.io (without a region),
+then you will need to adjust the model answer to remove all hints of region.
+
+The standard pattern in the answers for the domain is bootcamp-{{region}}.confluent.io
