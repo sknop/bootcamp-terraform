@@ -91,8 +91,8 @@ all:
     kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     ksql_kerberos_keytab_path: "/home/ubuntu/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
     ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    control_center_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
-    control_center_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    control_center_next_gen_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
+    control_center_next_gen_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
     # RBAC settings
     #
@@ -112,8 +112,68 @@ all:
     ksql_ldap_password: ksql-secret
     kafka_rest_ldap_user: rest
     kafka_rest_ldap_password: rest-secret
-    control_center_ldap_user: controlcenter
-    control_center_ldap_password: c3-secret
+    control_center_next_gen_ldap_user: controlcenter
+    control_center_next_gen_ldap_password: c3-secret
+
+    # mTLS settings for mTLS RBAC
+    #
+
+    mds_ssl_client_authentication: requested  # <required/requested/none>
+    ssl_mutual_auth_enabled: true
+    ssl_client_authentication: requested  # <required/requested/none>
+    # Sets mtls on kafka broker listeners, and also acts as default value for other components kafka_controller_ssl_client_authentication, schema_registry_ssl_client_authentication, kafka_rest_ssl_client_authentication, kafka_connect_ssl_client_authentication, kafka_connect_replicator_ssl_client_authentication
+    kafka_controller_ssl_mutual_auth_enabled: true
+    kafka_controller_ssl_client_authentication: requested
+    schema_registry_ssl_mutual_auth_enabled: true
+    schema_registry_ssl_client_authentication: requested
+    kafka_rest_ssl_mutual_auth_enabled: true
+    kafka_rest_ssl_client_authentication: requested
+    kafka_connect_ssl_mutual_auth_enabled: true
+    kafka_connect_ssl_client_authentication: requested
+    kafka_connect_replicator_ssl_mutual_auth_enabled: true
+    kafka_connect_replicator_ssl_client_authentication: requested
+    # These will all turn on due ssl_client_authentication. So we can set any of them to none and false if we dont want that component to enforce ssl client authentication(mTLS) on its clients.
+    # For example to turn off mTLS on kafka connect we can use
+    # kafka_connect_ssl_mutual_auth_enabled: false
+    # kafka_connect_ssl_client_authentication: none
+
+    # These variables will make CP component to MDS communication over mTLS. If not set then CP component to MDS communication would be running over LDAP+mTLS. It is our choice to enable them
+    kafka_broker_rest_proxy_mds_cert_auth_only: true
+    schema_registry_mds_cert_auth_only: true
+    kafka_connect_mds_cert_auth_only: true
+    kafka_rest_mds_cert_auth_only: true
+    control_center_mds_cert_auth_only: true
+
+    # List of super user principals who can get an impersonation token on behalf of other users. We should add broker, rest proxy, schema registry and connect principals here.
+    # The Principal which is used for CP component to talk to MDS. Here that is cert principal.
+    # Needed for principal propagation for Rest Proxy and Control Center to work.
+    # To extract dn from cert check use openssl x509 -noout -subject -nameopt RFC2253 -in <cert>
+    # using this the dn would be something like 'C=US,ST=Ca,L=PaloAlto,O=CONFLUENT,OU=TEST,CN=kafka_broker'
+    # Then applying the principal mapping rules it would give the principal kafka_broker
+    impersonation_super_users:
+      - 'kafka'
+      - 'kafka-rest'
+      - 'schema-registry'
+      - 'kafka-connect'
+
+    # Optional Config
+    # These users cant be impersonated by impersonation_super_users. Typically one might want to add super users here to stop any other user from impersonating it
+    impersonation_protected_users:
+      - 'super_user'
+
+    # This defines principal mapping rules. Optional to define.
+    # But if we want the certificate CN to get modified while defining the principal then we should define them now.
+    # They should remain the same for inter broker communication to work seamlessly
+    principal_mapping_rules:
+      - "RULE:.*CN=([a-zA-Z0-9-_]*).*$/$1/"
+      - "DEFAULT"
+
+    # The following variables are to switch CP component to Kafka communication from internal listener(running oauthbearer+mtls) to mtls only.
+    # Not a mandatory step
+    schema_registry_kafka_listener_name: mtls
+    kafka_connect_kafka_listener_name: mtls
+    kafka_rest_kafka_listener_name: mtls
+    control_center_kafka_listener_name: mtls
 
     kafka_broker_custom_listeners:
       broker:
@@ -140,6 +200,13 @@ all:
         ssl_enabled: true
         ssl_mutual_auth_enabled: false
         sasl_protocol: plain
+      mtls: # creating a new mTLS only listener
+        name: MTLS
+        port: 9096
+        ssl_enabled: true
+        ssl_mutual_auth_enabled: true
+        ssl_client_authentication: required
+        sasl_protocol: none
 
     kafka_broker_custom_properties:
       ldap.java.naming.factory.initial: com.sun.jndi.ldap.LdapCtxFactory
@@ -178,5 +245,8 @@ all:
       listener.name.ldap.plain.sasl.server.callback.handler.class: io.confluent.security.auth.provider.ldap.LdapAuthenticateCallbackHandler
       # From https://docs.confluent.io/platform/current/kafka/configure-mds/mutual-tls-auth-rbac.html#principal-mapping-rules-for-ssl-listeners-extract-a-principal-from-a-certificate
       listener.name.client.ssl.principal.mapping.rules: |
-        RULE:^CN=([a-zA-Z0-9]*).*$/$1/L ,\
+        RULE:^CN=([a-zA-Z0-9-]*).*$/$1/L ,\
+        DEFAULT
+      listener.name.mtls.ssl.principal.mapping.rules: |
+        RULE:^CN=([a-zA-Z0-9-]*).*$/$1/L ,\
         DEFAULT
