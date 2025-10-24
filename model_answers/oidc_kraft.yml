@@ -90,8 +90,6 @@ all:
     kafka_rest_kerberos_principal: "rest/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     kafka_connect_kerberos_keytab_path: "/home/ubuntu/kerberos/kafka-connect-{{inventory_hostname_short}}.keytab"
     kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-      # ksql_kerberos_keytab_path: "/home/ubuntu/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
-      #ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     control_center_next_gen_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
     control_center_next_gen_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
