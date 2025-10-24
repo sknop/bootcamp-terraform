@@ -91,8 +91,8 @@ all:
     kafka_connect_kerberos_principal: "kafka-connect/{{inventory_hostname}}@{{kerberos.realm | upper}}"
     ksql_kerberos_keytab_path: "/home/ubuntu/kerberos/ksqldb-{{inventory_hostname_short}}.keytab"
     ksql_kerberos_principal: "ksqldb/{{inventory_hostname}}@{{kerberos.realm | upper}}"
-    control_center_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
-    control_center_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
+    control_center_next_gen_kerberos_keytab_path: "/home/ubuntu/kerberos/control-center-{{inventory_hostname_short}}.keytab"
+    control_center_next_gen_kerberos_principal: "control-center/{{inventory_hostname}}@{{kerberos.realm | upper}}"
 
     # RBAC settings
     #
@@ -112,8 +112,8 @@ all:
     ksql_ldap_password: ksql-secret
     kafka_rest_ldap_user: rest
     kafka_rest_ldap_password: rest-secret
-    control_center_ldap_user: controlcenter
-    control_center_ldap_password: c3-secret
+    control_center_next_gen_ldap_user: controlcenter
+    control_center_next_gen_ldap_password: c3-secret
 
     kafka_broker_custom_listeners:
       broker:
