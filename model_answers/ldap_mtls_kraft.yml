@@ -152,9 +152,10 @@ all:
     # Then applying the principal mapping rules it would give the principal kafka_broker
     impersonation_super_users:
       - 'kafka'
-      - 'kafka-rest'
+      - 'kafka_rest'
       - 'schema-registry'
       - 'kafka-connect'
+      - 'control-center-next-gen'
 
     # Optional Config
     # These users cant be impersonated by impersonation_super_users. Typically one might want to add super users here to stop any other user from impersonating it
