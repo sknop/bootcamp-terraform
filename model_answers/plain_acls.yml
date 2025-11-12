@@ -1,0 +1,71 @@
+---
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: ubuntu
+    ansible_become: true
+
+    region: emea
+    domain: "bootcamp-{{region}}.confluent.io"
+
+    jmxexporter_enabled: true
+    jmxexporter_version: 1.5.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.5.0/jmx_prometheus_javaagent-1.5.0.jar
+    jmxexporter_jar_url_force: true
+
+    deployment_strategy: parallel # instead of rolling
+
+    ssl_enabled: true
+    ssl_provided_keystore_and_truststore: true
+    ssl_keystore_filepath: "/home/ubuntu/ssl/{{inventory_hostname}}-keystore.jks"
+    ssl_keystore_key_password: changeme
+    ssl_keystore_store_password: changeme
+    ssl_truststore_filepath: "/home/ubuntu/ssl/kafka-truststore.jks"
+    ssl_truststore_password: changeme
+    ssl_truststore_ca_cert_alias: root-ca
+
+    sasl_protocol: plain
+
+    kafka_connect_confluent_hub_plugins:
+      - confluentinc/kafka-connect-datagen:latest
+
+    sasl_plain_users:
+      admin:
+        principal: 'admin'
+        password: 'admin-secret'
+      schema_registry:
+        principal: 'schema-registry'
+        password: 'schema-registry-secret'
+      kafka_connect:
+        principal: 'kafka-connect'
+        password: 'kafka-connect-secret'
+      ksql:
+        principal: 'ksql'
+        password: 'ksql-secret'
+      kafka_rest:
+        principal: 'kafka_rest'
+        password: 'kafka_rest-secret'
+      control_center_next_gen:
+        principal: 'control-center'
+        password: 'control-center-secret'
+      client:
+        principal: 'client'
+        password: 'client-secret'
+      alice:
+        principal: 'alice'
+        password: alice-secret
+      producer:
+        principal: 'producer'
+        password: producer-secret
+      consumer:
+        principal: 'consumer'
+        password: consumer-secret
+
+    kafka_broker_custom_properties:
+        auto.create.topics.enable: false
+        authorizer.class.name: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+        super.users: "User:kafka;User:admin;User:schema-registry;User:kafka-connect;User:ksql;User:kafka_rest;User:control-center"
+    kafka_controller_custom_properties:
+        auto.create.topics.enable: false
+        authorizer.class.name: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+        super.users: "User:kafka;User:admin;User:schema-registry;User:kafka-connect;User:ksql;User:kafka_rest;User:control-center"
