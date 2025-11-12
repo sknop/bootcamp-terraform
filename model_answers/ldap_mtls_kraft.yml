@@ -31,6 +31,7 @@ all:
       - confluentinc/kafka-connect-oracle-cdc:latest
       - debezium/debezium-connector-mysql:latest
       - debezium/debezium-connector-postgresql:latest
+      - confluentinc/kafka-connect-datagen:latest
 
     kafka_connect_custom_properties:
       key.converter: io.confluent.connect.avro.AvroConverter
