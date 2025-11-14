@@ -1,6 +1,6 @@
 {
     "alice" : [ "Alice LookingGlass", "alice-secret" ],
-    "barnie" : [ "Barnie Rubble", "bart-secret" ],
+    "barnie" : [ "Barnie Rubble", "barnie-secret" ],
     "charlie" : [ "Charlie Sheen", "charlie-secret" ],
     "donald" : [ "Donald Duck", "donald-secret" ],
     "eva" : [ "Eva Maria", "eva-secret" ],
