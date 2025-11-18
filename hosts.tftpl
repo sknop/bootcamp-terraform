@@ -94,7 +94,7 @@ grafana:
 usm_agent:
     hosts:
 %{ for addr in usm_agents ~}
-    addr:
+        ${addr}:
 %{ endfor ~}
 %{ endif ~}
 
