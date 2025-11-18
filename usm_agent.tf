@@ -21,7 +21,7 @@ resource "aws_instance" "usm-agent" {
   }
 
   tags = {
-    Name = "${var.dns-suffix}-prometheus"
+    Name = "${var.dns-suffix}-usm-agent"
     description = "USM Agent node - Managed by Terraform"
     role = "usm-agent"
     Schedule = "mon-8am-fri-6pm"
@@ -34,7 +34,7 @@ resource "aws_instance" "usm-agent" {
     cflt_keep_until   = local.keep_until
   }
 
-  subnet_id = var.public-subnet-ids[local.usm-agent-placement]
+  subnet_id = var.private-subnet-ids[local.usm-agent-placement]
   availability_zone = var.availability-zones[local.usm-agent-placement]
   vpc_security_group_ids = [ var.internal-vpc-security-group-id ]
   associate_public_ip_address = false
