@@ -76,6 +76,12 @@ variable "create-monitoring-instances" {
   default = false
 }
 
+variable "create-usm-agent-instance" {
+  description = "If set, will create the USM Agent instance"
+  type = bool
+  default = false
+}
+
 variable "zk-instance-type" {
   default = "t3a.large"
 }
@@ -113,6 +119,10 @@ variable "prometheus-instance-type" {
 }
 
 variable "grafana-instance-type" {
+  default = "t3a.large"
+}
+
+variable "usm-agent-instance-type" {
   default = "t3a.large"
 }
 

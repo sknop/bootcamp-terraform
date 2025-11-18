@@ -90,3 +90,11 @@ grafana:
         ${addr}:
 %{ endfor ~}
 
+%{ if length(usm_agents) > 0 }
+usm_agent:
+    hosts:
+%{ for addr in usm_agents ~}
+    addr:
+%{ endfor ~}
+%{ endif ~}
+

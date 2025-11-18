@@ -34,6 +34,7 @@ c3-count = 0
 c3-next-gen-count = 1
 
 create-monitoring-instances = true
+create-usm-agent-instance = false
 
 # Leave these alone unless you know what you are doing
 # The following regions need to change instances t3a --> t3, because t3a is not available in that region yet

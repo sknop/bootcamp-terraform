@@ -22,6 +22,7 @@ resource "local_file" "ansible_inventory" {
       control_center_next_gens = aws_instance.control-center-next-gen.*.private_dns
       prometheus = aws_instance.prometheus.*.private_dns
       grafana = aws_instance.grafana.*.private_dns
+      usm_agents = aws_instance.usm-agent.*.private_dns
       domain_name = data.aws_route53_zone.bootcamp.name
     }
   )
@@ -84,6 +85,11 @@ resource "local_file" "hosts_json" {
         aws_instance.control-center-next-gen.*.private_dns,
         aws_route53_record.control-center-next-gen.*.name,
         [ for name in aws_route53_record.control-center-next-gen.*.name : "${name}.${data.aws_route53_zone.bootcamp.name}" ]
+      ]
+      usm_agents = [
+        aws_instance.usm-agent.*.private_dns,
+        aws_route53_record.usm-agent.*.name,
+        [ for name in aws_route53_record.usm-agent.*.name : "{$name}.${data.aws_route53_zone.bootcamp.name}"]
       ]
     }
   )
