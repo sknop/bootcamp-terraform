@@ -9,4 +9,5 @@ ${jsonencode({
     "ksqldb": [for addr in ksqls : "${addr}"],
     "kafka_rest": [for addr in kafka_rests : "${addr}"],
     "zookeeper": [for addr in zookeepers : "${addr}"],
+    "usm_agents": [for addr in usm_agents : "${addr}"],
 })}
