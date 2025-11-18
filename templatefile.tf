@@ -89,7 +89,7 @@ resource "local_file" "hosts_json" {
       usm_agents = [
         aws_instance.usm-agent.*.private_dns,
         aws_route53_record.usm-agent.*.name,
-        [ for name in aws_route53_record.usm-agent.*.name : "{$name}.${data.aws_route53_zone.bootcamp.name}"]
+        [ for name in aws_route53_record.usm-agent.*.name : "${name}.${data.aws_route53_zone.bootcamp.name}"]
       ]
     }
   )
