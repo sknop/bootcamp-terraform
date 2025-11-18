@@ -72,6 +72,10 @@ output "ksql_alternate_dns" {
   value = [aws_route53_record.ksql.*.name]
 }
 
+output "usm-agent-private-dns" {
+  value = [aws_route53_record.usm-agent.*.name]
+}
+
 output "prometheus_private_dns" {
   value = aws_instance.prometheus.*.private_dns
 }
