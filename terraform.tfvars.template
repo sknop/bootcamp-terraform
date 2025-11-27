@@ -1,7 +1,7 @@
 # Change these
 owner-email = "sven@confluent.io"
 owner-name = "Sven Erik Knop"
-dns-suffix = "change-me-to-your-shortname-or-nickname"
+dns-suffix = <YOUR-SHORT-NAME>
 key-name = "bootcamp-emea-key"
 purpose = "Bootcamp EMEA"
 
@@ -13,15 +13,15 @@ cflt_service = "CTG"
 
 # Adjust these to your trainer's instructions
 region = "eu-west-1"
-aws-ami-id = "<AMI>"
+aws-ami-id = <AMI>
 
-hosted-zone-id = "<HOSTZONE>"
-internal-vpc-security-group-id = "<INTERNAL SG>"
-external-vpc-security-group-id = "<EXTERNAL SG>"
-vpc-id = "<VPC ID>>"
-availability-zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-private-subnet-ids = ["<SUBNET1>", "<SUBNET2>", "<SUBNET3>"]
-public-subnet-ids = ["<SUBNET1>", "<SUBNET2>", "<SUBNET3>",]
+hosted-zone-id = <HOST ZONE>
+internal-vpc-security-group-id = <INTERNAL SG>
+external-vpc-security-group-id = <EXTERNAL SG>
+vpc-id = <VPC ID>
+availability-zones = [<AZ1>, <AZ2>, <AZ3>]
+private-subnet-ids = [<SUBNET1>, <SUBNET2>, <SUBNET3>]
+public-subnet-ids = [<SUBNET1>, <SUBNET2>, <SUBNET3>]
 
 zk-count = 0
 controller-count = 3
