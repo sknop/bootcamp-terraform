@@ -2,7 +2,7 @@
 owner-email = "sven@confluent.io"
 owner-name = "Sven Erik Knop"
 dns-suffix = <YOUR-SHORT-NAME>
-key-name = "bootcamp-emea-key"
+key-name = "bootcamp-key"
 purpose = "Bootcamp EMEA"
 
 cflt_environment = "devel"

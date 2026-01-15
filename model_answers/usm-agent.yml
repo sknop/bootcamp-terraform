@@ -1,0 +1,61 @@
+---
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: ubuntu
+    ansible_become: true
+
+    domain: bootcamp.confluent.io
+
+    jmxexporter_enabled: true
+    jmxexporter_version: 1.5.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.5.0/jmx_prometheus_javaagent-1.5.0.jar
+    jmxexporter_jar_url_force: true
+
+
+    kafka_connect_confluent_hub_plugins:
+      - debezium/debezium-connector-postgresql:latest
+      - confluentinc/kafka-connect-datagen:latest
+
+    ccloud_endpoint: https://api.eu-west-1.AWS.private.confluent.cloud
+    ccloud_environment_id: env-gj3wj3
+    ccloud_credential:
+      username: FTQH7QGJ546OLWFD
+      password: cfltfH8q8opwSWLuPD616NsP8oFgmBto8KvYnVbTMOOk0xd4A8qmOiuWygc4yihg
+
+    password_encoder_secret: "encoder-secret"
+
+    unified_stream_manager:
+      schema_registry_endpoint: https://lsrc-5r6xqg.eu-west-1.aws.private.confluent.cloud
+      authentication_type: basic  # Currently only 'basic' auth supported
+      basic_username: XZUL4ZC6A37OWKVP
+      basic_password: cflt5ZFjuwL0W/sHUEl/IwZ+XB8JHgjmvwQTiDkL8aWJoq5X31fEwXulO+lUwGeA
+
+    schema_exporters:
+      - name: schema-exporter  # Must match sr_switch_over_exporter_name
+        subjects: [":*:"]  # Export all subjects, or specify patterns: [":.context:*", "subject-prefix-*"]
+        context_type: "AUTO"  # AUTO|CUSTOM|NONE|DEFAULT - how to handle contexts
+        # context: "custom-context"  # Required if context_type is CUSTOM
+        config:
+          schema_registry_endpoint: https://lsrc-5r6xqg.eu-west-1.aws.private.confluent.cloud
+          authentication_type: basic  # Currently only 'basic' auth supported
+          basic_username: XZUL4ZC6A37OWKVP
+          basic_password: cflt5ZFjuwL0W/sHUEl/IwZ+XB8JHgjmvwQTiDkL8aWJoq5X31fEwXulO+lUwGeA
+
+    ## REQUIRED: Specify which exporter to use for switchover workflow
+    ## - Must match one of schema_exporters[].name if exporters are defined
+    ## - Can be undefined/empty for blank CP deployments (import-only workflow)
+    sr_switch_over_exporter_name: "schema-exporter"
+
+    ## REQUIRED: Define importers for reverse sync (CC SR → CP SR)
+    ## This enables bidirectional sync after switchover
+    schema_importers:
+      - name: "schema-importer"
+        subjects: [":*:"]  # Import all subjects from CC, or specify patterns
+        config:
+          schema_registry_endpoint: https://lsrc-5r6xqg.eu-west-1.aws.private.confluent.cloud
+          authentication_type: basic  # Currently only 'basic' auth supported
+          basic_username: XZUL4ZC6A37OWKVP
+          basic_password: cflt5ZFjuwL0W/sHUEl/IwZ+XB8JHgjmvwQTiDkL8aWJoq5X31fEwXulO+lUwGeA
+
+    confluent.license:
