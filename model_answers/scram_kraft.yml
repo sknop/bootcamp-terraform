@@ -1,0 +1,34 @@
+---
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: ubuntu
+    ansible_become: true
+
+    region: emea
+    domain: "bootcamp-{{region}}.confluent.io"
+
+    jmxexporter_enabled: true
+    jmxexporter_version: 1.4.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.4.0.jar
+    jmxexporter_jar_url_force: true
+
+    ssl_enabled: true
+    sasl_protocol: scram
+    ssl_provided_keystore_and_truststore: true
+    ssl_keystore_filepath: "/home/ubuntu/ssl/{{inventory_hostname}}-keystore.jks"
+    ssl_keystore_key_password: changeme
+    ssl_keystore_store_password: changeme
+    ssl_truststore_filepath: "/home/ubuntu/ssl/kafka-truststore.jks"
+    ssl_truststore_password: changeme
+
+    kafka_controller_sasl_protocol: plain,scram
+
+    sasl_scram_users:
+      alice:
+        principal: alice
+        password: alice-secret
+      charlie:
+        principal: charlie
+        password: charlie-secret
+
