@@ -9,12 +9,11 @@ all:
     domain: "bootcamp-{{region}}.confluent.io"
 
     jmxexporter_enabled: true
-    jmxexporter_version: 1.4.0
-    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.4.0.jar
+    jmxexporter_version: 1.5.0
+    jmxexporter_jar_url: https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jmx_prometheus_javaagent-1.5.0.jar
     jmxexporter_jar_url_force: true
 
     ssl_enabled: true
-    sasl_protocol: scram
     ssl_provided_keystore_and_truststore: true
     ssl_keystore_filepath: "/home/ubuntu/ssl/{{inventory_hostname}}-keystore.jks"
     ssl_keystore_key_password: changeme
@@ -22,6 +21,10 @@ all:
     ssl_truststore_filepath: "/home/ubuntu/ssl/kafka-truststore.jks"
     ssl_truststore_password: changeme
 
+    # SCRAM only works if it is installed on a fresh installation
+    # cp-ansible does not support changing security settings to or from SCRAM
+
+    sasl_protocol: scram
     kafka_controller_sasl_protocol: plain,scram
 
     sasl_scram_users:
